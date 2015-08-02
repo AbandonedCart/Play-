@@ -1,10 +1,11 @@
 <RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".MainActivity">
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".MainActivity"
+	android:id="@+id/relative_layout">
 
 	<android.support.v7.widget.Toolbar
 		android:id="@+id/my_awesome_toolbar"
@@ -22,10 +23,9 @@
 		android:id="@+id/drawer_layout"
 		android:layout_width="match_parent"
         android:layout_height="match_parent"
-		android:fitsSystemWindows="true"
-		android:layout_alignParentBottom="true"
-		android:layout_below="@+id/my_awesome_toolbar"
-		android:background="@drawable/gradient_grid" >
+        android:layout_alignParentBottom="true"
+        android:fitsSystemWindows="false"
+        android:layout_below="@+id/my_awesome_toolbar">
 		<!-- The main content view -->
 		<FrameLayout
 			android:id="@+id/content_frame"

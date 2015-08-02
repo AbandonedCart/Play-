@@ -7,6 +7,14 @@ import android.content.pm.*;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.PaintDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.*;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +30,7 @@ import android.widget.TextView;
 import android.support.v4.widget.DrawerLayout;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.text.*;
 import java.util.*;
 import java.util.zip.*;
@@ -30,6 +39,7 @@ import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.comparator.SizeFileComparator;
 import org.apache.commons.lang3.StringUtils;
 import com.android.util.FileUtils;
+import android.graphics.Point;
 
 import com.virtualapplications.play.database.GameInfo;
 import com.virtualapplications.play.database.SqliteHelper.Games;
@@ -115,7 +125,16 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			};
 			Thread.setDefaultUncaughtExceptionHandler(mUEHandler);
 		}
+	}
 
+	@Override 
+	protected void onPostCreate(Bundle savedInstanceState) 
+	{	
+		super.onPostCreate(savedInstanceState);
+		
+
+		adjustUI();
+		
 		NativeInterop.setFilesDirPath(Environment.getExternalStorageDirectory().getAbsolutePath());
 
 		EmulatorActivity.RegisterPreferences();
@@ -144,10 +163,126 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			} else {
 				getSupportActionBar().setTitle(getString(R.string.menu_title_shut));
 			}
+		prepareFileListView();
+	}
+
+	public int getStatusBarHeight() {
+		int result = 0;
+		int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+		if (resourceId > 0) {
+			result = getResources().getDimensionPixelSize(resourceId);
 		}
 	}
 
-	private static long getBuildDate(Context context)
+	private void adjustUI() {
+		//this sets toolbar margin, but in effect moving the DrawerLayout
+		int statusBarHeight = getStatusBarHeight();
+
+		View toolbar = findViewById(R.id.my_awesome_toolbar);
+		final FrameLayout content = (FrameLayout) findViewById(R.id.content_frame);
+		
+		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
+		dlp.topMargin = statusBarHeight;
+		content.setLayoutParams(dlp);
+
+		int[] colors = new int[2];// you can increase array size to add more colors to gradient.
+		TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorPrimary});
+		int attributeResourceId = a.getColor(0, 0);
+		a.recycle();
+		float[] hsv = new float[3];
+		Color.colorToHSV(attributeResourceId, hsv);
+		hsv[2] *= 0.8f;// make it darker
+		colors[0] = Color.HSVToColor(hsv);
+		/*
+		using this will blend the top of the gradient with actionbar (aka using the same color)
+		colors[0] = Color.parseColor("#" + Integer.toHexString(attributeResourceId)
+		 */
+		colors[1] = Color.rgb(20,20,20);
+		GradientDrawable gradientbg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
+		content.setBackground(gradientbg);
+
+		ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+		mlp.bottomMargin = - statusBarHeight;
+		toolbar.setLayoutParams(mlp);
+		View navigation_drawer = findViewById(R.id.navigation_drawer);
+		ViewGroup.MarginLayoutParams mlp2 = (ViewGroup.MarginLayoutParams) navigation_drawer.getLayoutParams();
+		mlp2.topMargin = statusBarHeight;
+		navigation_drawer.setLayoutParams(mlp2);
+
+		Point p = getNavigationBarSize(this);
+		if (p != null){
+			/*
+			This will take account of nav bar to right/bottom
+			Not sure if there is a way to detect left/top? thus always pad right/bottom for now
+			*/
+			if (p.x != 0){
+				View relative_layout = findViewById(R.id.relative_layout);
+				relative_layout.setPadding(
+						relative_layout.getPaddingLeft(), 
+						relative_layout.getPaddingTop(), 
+						relative_layout.getPaddingRight() + p.x, 
+						relative_layout.getPaddingBottom());
+			} else {
+				navigation_drawer.setPadding(
+					navigation_drawer.getPaddingLeft(), 
+					navigation_drawer.getPaddingTop(), 
+					navigation_drawer.getPaddingRight(), 
+					navigation_drawer.getPaddingBottom() + p.y);
+
+			View game_scroller = findViewById(R.id.game_grid);
+			game_scroller.setPadding(
+				game_scroller.getPaddingLeft(), 
+				game_scroller.getPaddingTop(), 
+				game_scroller.getPaddingRight(), 
+				game_scroller.getPaddingBottom() + p.y);
+			}
+		}
+	}
+
+	public static Point getNavigationBarSize(Context context) {
+		Point appUsableSize = getAppUsableScreenSize(context);
+		Point realScreenSize = getRealScreenSize(context);
+
+		// navigation bar on the right
+		if (appUsableSize.x < realScreenSize.x) {
+			return new Point(realScreenSize.x - appUsableSize.x, realScreenSize.y - appUsableSize.y);
+		}
+
+		// navigation bar at the bottom
+		if (appUsableSize.y < realScreenSize.y) {
+			return new Point(realScreenSize.x - appUsableSize.x, realScreenSize.y - appUsableSize.y);
+		}
+
+		// navigation bar is not present
+		return null;
+	}
+
+	public static Point getAppUsableScreenSize(Context context) {
+		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		Display display = windowManager.getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		return size;
+	}
+
+	public static Point getRealScreenSize(Context context) {
+		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		Display display = windowManager.getDefaultDisplay();
+		Point size = new Point();
+
+		if (Build.VERSION.SDK_INT >= 17) {
+		display.getRealSize(size);
+		} else if (Build.VERSION.SDK_INT >= 14) {
+		try {
+			size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
+			size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
+		} catch (IllegalAccessException e) {} catch (InvocationTargetException e) {} catch (NoSuchMethodException e) {}
+		}
+
+		return size;
+	}
+
+	private static long getBuildDate(Context context) 
 	{
 		try
 		{
