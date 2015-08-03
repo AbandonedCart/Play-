@@ -162,6 +162,7 @@
 		70AD23951B39199300137AA0 /* MaxSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70AD238F1B39199300137AA0 /* MaxSaveImporter.cpp */; };
 		70AD23961B39199300137AA0 /* PsuSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70AD23911B39199300137AA0 /* PsuSaveImporter.cpp */; };
 		70AD23971B39199300137AA0 /* XpsSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70AD23931B39199300137AA0 /* XpsSaveImporter.cpp */; };
+		87C64DF31B6F1FC600FDD99A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C64DF01B6F1FC600FDD99A /* iCadeReaderView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		87C86C0B1B65F3330006233E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0A1B65F3330006233E /* QuartzCore.framework */; };
 		87C86C0D1B65F33A0006233E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0C1B65F33A0006233E /* OpenGLES.framework */; };
 		87C86C0F1B65F3480006233E /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0E1B65F3470006233E /* libbz2.dylib */; };
@@ -490,6 +491,9 @@
 		70AD23921B39199300137AA0 /* PsuSaveImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PsuSaveImporter.h; path = ../Source/saves/PsuSaveImporter.h; sourceTree = "<group>"; };
 		70AD23931B39199300137AA0 /* XpsSaveImporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XpsSaveImporter.cpp; path = ../Source/saves/XpsSaveImporter.cpp; sourceTree = "<group>"; };
 		70AD23941B39199300137AA0 /* XpsSaveImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XpsSaveImporter.h; path = ../Source/saves/XpsSaveImporter.h; sourceTree = "<group>"; };
+		87C64DEF1B6F1FC600FDD99A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
+		87C64DF01B6F1FC600FDD99A /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
+		87C64DF11B6F1FC600FDD99A /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
 		87C86BFE1B65F3130006233E /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = "../../Play-Framework/build_ios/Framework.xcodeproj"; sourceTree = "<group>"; };
 		87C86C041B65F3190006233E /* CodeGen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodeGen.xcodeproj; path = "../../Play-CodeGen/build_ios/CodeGen.xcodeproj"; sourceTree = "<group>"; };
 		87C86C0A1B65F3330006233E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
@@ -535,6 +539,7 @@
 		70834AB01B1BC70300E8D5C6 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				87C64DEE1B6F1FC600FDD99A /* iCade-iOS */,
 				70834AFC1B1BCD1200E8D5C6 /* Play Core */,
 				70834AFB1B1BCCFF00E8D5C6 /* ui_ios */,
 			);
@@ -918,6 +923,17 @@
 			name = saves;
 			sourceTree = "<group>";
 		};
+		87C64DEE1B6F1FC600FDD99A /* iCade-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				87C64DEF1B6F1FC600FDD99A /* iCadeReaderView.h */,
+				87C64DF01B6F1FC600FDD99A /* iCadeReaderView.m */,
+				87C64DF11B6F1FC600FDD99A /* iCadeState.h */,
+			);
+			name = "iCade-iOS";
+			path = "../third-party/iCade-iOS";
+			sourceTree = "<group>";
+		};
 		87C86BFF1B65F3130006233E /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1154,6 +1170,7 @@
 				70AD23871B38FFBA00137AA0 /* Icon.cpp in Sources */,
 				70834C7D1B1BD70700E8D5C6 /* Iop_SifMan.cpp in Sources */,
 				70834C7E1B1BD70700E8D5C6 /* Iop_SifManNull.cpp in Sources */,
+				87C64DF31B6F1FC600FDD99A /* iCadeReaderView.m in Sources */,
 				70834C831B1BD70700E8D5C6 /* Iop_Spu2.cpp in Sources */,
 				70834C6F1B1BD70700E8D5C6 /* Iop_FileIoHandler1000.cpp in Sources */,
 				70834BDE1B1BD6A300E8D5C6 /* COP_VU.cpp in Sources */,
