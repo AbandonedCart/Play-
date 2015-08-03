@@ -5,29 +5,28 @@ import android.app.ProgressDialog;
 import android.content.*;
 import android.content.pm.*;
 import android.content.res.Configuration;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.*;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.*;
 import android.view.*;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
-import android.widget.AdapterView.*;
-import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.io.*;
 import java.text.*;
 import java.util.*;
 import java.util.zip.*;
+import org.apache.commons.io.comparator.CompositeFileComparator;
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.apache.commons.io.comparator.SizeFileComparator;
 import org.apache.commons.lang3.StringUtils;
 import com.android.util.FileUtils;
 
@@ -35,38 +34,60 @@ import com.virtualapplications.play.database.GameInfo;
 import com.virtualapplications.play.database.SqliteHelper.Games;
 import com.virtualapplications.play.logging.GenerateLogs;
 
-public class MainActivity extends Activity 
-{	
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks
+{
 	private static final String PREFERENCE_CURRENT_DIRECTORY = "CurrentDirectory";
-	
+
 	private SharedPreferences _preferences;
 	private TableLayout gameListing;
 	static Activity mActivity;
 	private boolean isConfigured = false;
 	private int numColumn = 0;
-	private DrawerLayout mDrawerLayout;
-	private ActionBarDrawerToggle mDrawerToggle;
 	private float localScale;
 	private int currentOrientation;
 	private GameInfo gameInfo;
-	
+	protected NavigationDrawerFragment mNavigationDrawerFragment;
 	private UncaughtExceptionHandler mUEHandler;
 	
+	public static final int SORT_NONE = 0;
+	public static final int SORT_RECENT = 1;
+	private int sortMethod = SORT_NONE;
+	
 	@Override 
-	protected void onCreate(Bundle savedInstanceState) 
+	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		//Log.w(Constants.TAG, "MainActivity - onCreate");
-		
+
 		currentOrientation = getResources().getConfiguration().orientation;
-		if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-		} else {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-		}
-		
+//		if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+//		} else {
+//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+//		}
+
 		setContentView(R.layout.main);
-		
+
+		Toolbar toolbar = getSupportToolbar();
+		setSupportActionBar(toolbar);
+		toolbar.bringToFront();
+
+		mNavigationDrawerFragment = (NavigationDrawerFragment)
+				getFragmentManager().findFragmentById(R.id.navigation_drawer);
+
+		// Set up the drawer.
+		mNavigationDrawerFragment.setUp(
+				R.id.navigation_drawer,
+				(DrawerLayout) findViewById(R.id.drawer_layout));
+
+		TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorPrimaryDark});
+		int attributeResourceId = a.getColor(0, 0);
+		a.recycle();
+		findViewById(R.id.navigation_drawer).setBackgroundColor(Color.parseColor(
+				("#" + Integer.toHexString(attributeResourceId)).replace("#ff", "#8e")
+		));
+
+		mActivity = MainActivity.this;
 		_preferences = getSharedPreferences("prefs", MODE_PRIVATE);
 		
 		String prior_error = _preferences.getString("prior_error", null);
@@ -92,70 +113,11 @@ public class MainActivity extends Activity
 			};
 			Thread.setDefaultUncaughtExceptionHandler(mUEHandler);
 		}
-		
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerToggle = new ActionBarDrawerToggle(
-			MainActivity.this,      /* host Activity */
-			mDrawerLayout,			/* DrawerLayout object */
-			R.drawable.ic_drawer,	/* nav drawer icon to replace 'Up' caret */
-			R.string.drawer_open,	/* "open drawer" description */
-			R.string.drawer_shut	/* "close drawer" description */
-		) {
-			/** Called when a drawer has settled in a completely closed state. */
-			public void onDrawerClosed(View view) {
-				super.onDrawerClosed(view);
-				if (!isConfigured) {
-					getActionBar().setTitle(getString(R.string.menu_title_look));
-				} else {
-					getActionBar().setTitle(getString(R.string.menu_title_shut));
-				}
-			}
-			
-			/** Called when a drawer has settled in a completely open state. */
-			public void onDrawerOpened(View drawerView) {
-				super.onDrawerOpened(drawerView);
-				getActionBar().setTitle(getString(R.string.menu_title_open));
-			}
-		};
-		
-		// Set the drawer toggle as the DrawerListener
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		
-		Button buttonPrefs = (Button) mDrawerLayout.findViewById(R.id.main_menu_settings);
-		buttonPrefs.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				displaySettingsActivity();
-			}
-		});
-		
-		Button buttonAbout = (Button) mDrawerLayout.findViewById(R.id.main_menu_about);
-		buttonAbout.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				displayAboutDialog();
-			}
-		});
-		
-		Button buttonDebug = (Button) mDrawerLayout.findViewById(R.id.main_menu_debug);
-		buttonDebug.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				generateErrorLog();
-			}
-		});
-		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
-		getActionBar().setTitle(getString(R.string.menu_title_shut));
-		
-		mActivity = MainActivity.this;
-		
-		File filesDir = getFilesDir();
+
 		NativeInterop.setFilesDirPath(Environment.getExternalStorageDirectory().getAbsolutePath());
-		
+
 		EmulatorActivity.RegisterPreferences();
-	
+
 		if(!NativeInterop.isVirtualMachineCreated())
 		{
 			NativeInterop.createVirtualMachine();
@@ -169,14 +131,21 @@ public class MainActivity extends Activity
 				setIntent(null);
 			}
 		}
-		
+
 		gameInfo = new GameInfo(MainActivity.this);
 		getContentResolver().call(Games.GAMES_URI, "importDb", null, null);
-		
+
 		prepareFileListView();
+		if (!mNavigationDrawerFragment.isDrawerOpen()) {
+			if (!isConfigured) {
+				getSupportActionBar().setTitle(getString(R.string.menu_title_look));
+			} else {
+				getSupportActionBar().setTitle(getString(R.string.menu_title_shut));
+			}
+		}
 	}
 
-	private static long getBuildDate(Context context) 
+	private static long getBuildDate(Context context)
 	{
 		try
 		{
@@ -185,14 +154,14 @@ public class MainActivity extends Activity
 			ZipEntry ze = zf.getEntry("classes.dex");
 			long time = ze.getTime();
 			return time;
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 
 		}
 		return 0;
 	}
-	
+
 	private void displaySimpleMessage(String title, String message)
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -200,27 +169,27 @@ public class MainActivity extends Activity
 		builder.setTitle(title);
 		builder.setMessage(message);
 
-		builder.setPositiveButton("OK", 
-			new DialogInterface.OnClickListener() 
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int id) 
+		builder.setPositiveButton("OK",
+				new DialogInterface.OnClickListener()
 				{
-					
+					@Override
+					public void onClick(DialogInterface dialog, int id)
+					{
+
+					}
 				}
-			}
 		);
-		
+
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
-	
+
 	private void displaySettingsActivity()
 	{
 		Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
 		startActivity(intent);
 	}
-	
+
 	private void displayAboutDialog()
 	{
 		long buildDate = getBuildDate(this);
@@ -228,55 +197,24 @@ public class MainActivity extends Activity
 		String aboutMessage = String.format("Build Date: %s", buildDateString);
 		displaySimpleMessage("About Play!", aboutMessage);
 	}
-	
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		// Sync the toggle state after onRestoreInstanceState has occurred.
-		mDrawerToggle.syncState();
-	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		mDrawerToggle.onConfigurationChanged(newConfig);
-		
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) 
-	{
-		// Pass the event to ActionBarDrawerToggle, if it returns
-		// true, then it has handled the app icon touch event
-		if (mDrawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-		switch(item.getItemId()) 
-		{
-		case android.R.id.home:
-			if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-				mDrawerLayout.closeDrawer(Gravity.LEFT);
-			} else {
-				mDrawerLayout.openDrawer(Gravity.LEFT);
-			}
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-	
+
 	private String getCurrentDirectory()
 	{
-		return _preferences.getString(PREFERENCE_CURRENT_DIRECTORY, Environment.getExternalStorageDirectory().getAbsolutePath());
+		if (_preferences != null) {
+		return _preferences.getString(PREFERENCE_CURRENT_DIRECTORY,
+			Environment.getExternalStorageDirectory().getAbsolutePath());
+		} else {
+			return Environment.getExternalStorageDirectory().getAbsolutePath();
+		}
 	}
-	
+
 	public static HashSet<String> getExternalMounts() {
 		final HashSet<String> out = new HashSet<String>();
 		String reg = "(?i).*vold.*(vfat|ntfs|exfat|fat32|ext3|ext4|fuse).*rw.*";
 		String s = "";
 		try {
 			final java.lang.Process process = new ProcessBuilder().command("mount")
-			.redirectErrorStream(true).start();
+					.redirectErrorStream(true).start();
 			process.waitFor();
 			final InputStream is = process.getInputStream();
 			final byte[] buffer = new byte[1024];
@@ -285,9 +223,9 @@ public class MainActivity extends Activity
 			}
 			is.close();
 		} catch (final Exception e) {
-			
+
 		}
-		
+
 		final String[] lines = s.split("\n");
 		for (String line : lines) {
 			if (StringUtils.containsIgnoreCase(line, "secure"))
@@ -305,27 +243,27 @@ public class MainActivity extends Activity
 		}
 		return out;
 	}
-	
+
 	private void setCurrentDirectory(String currentDirectory)
 	{
 		SharedPreferences.Editor preferencesEditor = _preferences.edit();
 		preferencesEditor.putString(PREFERENCE_CURRENT_DIRECTORY, currentDirectory);
 		preferencesEditor.commit();
 	}
-	
+
 	private void clearCurrentDirectory()
 	{
 		SharedPreferences.Editor preferencesEditor = _preferences.edit();
 		preferencesEditor.remove(PREFERENCE_CURRENT_DIRECTORY);
 		preferencesEditor.commit();
 	}
-	
+
 	public static void resetDirectory() {
 		((MainActivity) mActivity).clearCurrentDirectory();
 		((MainActivity) mActivity).isConfigured = false;
 		((MainActivity) mActivity).prepareFileListView();
 	}
-	
+
 	private void clearCoverCache() {
 		File dir = new File(getExternalFilesDir(null), "covers");
 		for (File file : dir.listFiles()) {
@@ -334,45 +272,139 @@ public class MainActivity extends Activity
 			}
 		}
 	}
-	
+
 	public static void clearCache() {
 		((MainActivity) mActivity).clearCoverCache();
 	}
-	
+
 	private static boolean IsLoadableExecutableFileName(String fileName)
 	{
 		return fileName.toLowerCase().endsWith(".elf");
 	}
-	
+
 	private static boolean IsLoadableDiskImageFileName(String fileName)
 	{
-		
-		return  
-				fileName.toLowerCase().endsWith(".iso") ||
-				fileName.toLowerCase().endsWith(".bin") ||
-				fileName.toLowerCase().endsWith(".cso") ||
-				fileName.toLowerCase().endsWith(".isz");
+
+		return fileName.toLowerCase().endsWith(".iso") ||
+			fileName.toLowerCase().endsWith(".bin") ||
+			fileName.toLowerCase().endsWith(".cso") ||
+			fileName.toLowerCase().endsWith(".isz");
+	}
+
+	@Override
+	public void onNavigationDrawerItemSelected(int position) {
+		switch (position) {
+			case 0:
+				sortMethod = SORT_RECENT;
+				prepareFileListView();
+				break;
+			case 1:
+				sortMethod = SORT_NONE;
+				prepareFileListView();
+				break;
+		}
+	}
+
+	@Override
+	public void onNavigationDrawerBottomItemSelected(int position) {
+		switch (position) {
+			case 0:
+				displaySettingsActivity();
+				break;
+			case 1:
+				generateErrorLog();
+				break;
+			case 2:
+				displayAboutDialog();
+				break;
+		}
+	}
+
+	public void restoreActionBar() {
+		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setIcon(R.drawable.ic_logo);
+		actionBar.setTitle(R.string.menu_title_shut);
+		actionBar.setSubtitle(null);
 	}
 	
-	private final class ImageFinder extends AsyncTask<String, Integer, List<File>> {
+	private int getStatusBarHeight() {
+		int result = 0;
+		int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+		if (resourceId > 0) {
+			result = getResources().getDimensionPixelSize(resourceId);
+		}
+		return result;
+	}
+	
+	private Toolbar getSupportToolbar() {
+		int statusBarHeight = getStatusBarHeight();
 		
+		Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+		ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+		mlp.bottomMargin = - statusBarHeight;
+		toolbar.setLayoutParams(mlp);
+
+		FrameLayout content = (FrameLayout) findViewById(R.id.content_frame);
+		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
+		dlp.topMargin = statusBarHeight;
+		content.setLayoutParams(dlp);
+
+		return toolbar;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		if (!mNavigationDrawerFragment.isDrawerOpen()) {
+			restoreActionBar();
+			return true;
+		}
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		if (NavigationDrawerFragment.mDrawerLayout != null && mNavigationDrawerFragment.isDrawerOpen()) {
+			NavigationDrawerFragment.mDrawerLayout.closeDrawer(NavigationDrawerFragment.mFragmentContainerView);
+		} else {
+			finish();
+		}
+		return;
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
+			if (mNavigationDrawerFragment.isDrawerOpen()) {
+				mNavigationDrawerFragment.mDrawerLayout.closeDrawer(NavigationDrawerFragment.mFragmentContainerView);
+			} else {
+				mNavigationDrawerFragment.mDrawerLayout.openDrawer(NavigationDrawerFragment.mFragmentContainerView);
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	private final class ImageFinder extends AsyncTask<String, Integer, List<File>> {
+
 		private int array;
 		private ProgressDialog progDialog;
-		
+
 		public ImageFinder(int arrayType) {
 			this.array = arrayType;
 		}
-		
+
 		private List<File> getFileList(String path) {
 			File storage = new File(path);
-			
+
 			String[] mediaTypes = MainActivity.this.getResources().getStringArray(array);
 			FilenameFilter[] filter = new FilenameFilter[mediaTypes.length];
-			
+
 			int i = 0;
 			for (final String type : mediaTypes) {
 				filter[i] = new FilenameFilter() {
-					
+
 					public boolean accept(File dir, String name) {
 						if (dir.getName().startsWith(".") || name.startsWith(".")) {
 							return false;
@@ -380,59 +412,65 @@ public class MainActivity extends Activity
 							File disk = new File(dir, name);
 							String serial = gameInfo.getSerial(disk);
 							return IsLoadableExecutableFileName(disk.getPath()) ||
-								(serial != null && !serial.equals(""));
+									(serial != null && !serial.equals(""));
 						} else {
 							return false;
 						}
 					}
-					
+
 				};
 				i++;
 			}
 			FileUtils fileUtils = new FileUtils();
 			Collection<File> files = fileUtils.listFiles(storage, filter, -1);
+			if (sortMethod == SORT_RECENT) {
+				@SuppressWarnings("unchecked")
+				CompositeFileComparator comparator = new CompositeFileComparator(
+					SizeFileComparator.SIZE_REVERSE, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+				comparator.sort((List<File>) files);
+			}
 			return (List<File>) files;
 		}
-		
+
 		private View createListItem(final File game, final int index) {
-			
+
 			if (!isConfigured) {
-				
+
 				final View childview = MainActivity.this.getLayoutInflater().inflate(
-					R.layout.file_list_item, null, false);
-				
+						R.layout.file_list_item, null, false);
+
 				((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
-				
+
 				childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
 					public void onClick(View view) {
 						setCurrentDirectory(game.getPath().substring(0,
-							game.getPath().lastIndexOf(File.separator)));
+								game.getPath().lastIndexOf(File.separator)));
 						isConfigured = true;
 						prepareFileListView();
 						return;
 					}
 				});
-				
+
 				return childview;
 			}
-			
+
 			final View childview = MainActivity.this.getLayoutInflater().inflate(
-				R.layout.game_list_item, null, false);
-			
+					R.layout.game_list_item, null, false);
+
 			((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
-			
+
 			final String[] gameStats = gameInfo.getGameInfo(game, childview);
-			
+
 			if (gameStats != null) {
 				childview.findViewById(R.id.childview).setOnLongClickListener(
-					gameInfo.configureLongClick(gameStats[1], gameStats[2], game));
+						gameInfo.configureLongClick(gameStats[1], gameStats[2], game));
 
 				if (!gameStats[3].equals("404")) {
 					gameInfo.getImage(gameStats[0], childview, gameStats[3]);
 					((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
 				}
 			}
-			
+
 			childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
 				public void onClick(View view) {
 					launchDisk(game, false);
@@ -441,20 +479,20 @@ public class MainActivity extends Activity
 			});
 			return childview;
 		}
-		
+
 		protected void onPreExecute() {
 			progDialog = ProgressDialog.show(MainActivity.this,
-				getString(R.string.search_games),
-				getString(R.string.search_games_msg), true);
+					getString(R.string.search_games),
+					getString(R.string.search_games_msg), true);
 		}
-		
+
 		@Override
 		protected List<File> doInBackground(String... paths) {
-			
+
 			final String root_path = paths[0];
 			ArrayList<File> files = new ArrayList<File>();
 			files.addAll(getFileList(root_path));
-			
+
 			if (!isConfigured) {
 				HashSet<String> extStorage = MainActivity.getExternalMounts();
 				if (extStorage != null && !extStorage.isEmpty()) {
@@ -472,7 +510,7 @@ public class MainActivity extends Activity
 			
 			return (List<File>) files;
 		}
-		
+
 		@Override
 		protected void onPostExecute(List<File> images) {
 			if (progDialog != null && progDialog.isShowing()) {
@@ -482,14 +520,14 @@ public class MainActivity extends Activity
 				// Create the list of acceptable images
 
 				Collections.sort(images);
-	
+
 				TableRow game_row = new TableRow(MainActivity.this);
 				if (isConfigured) {
 					game_row.setGravity(Gravity.CENTER);
 				}
 				int pad = (int) (10 * localScale + 0.5f);
 				game_row.setPadding(0, 0, 0, pad);
-				
+
 				if (!isConfigured) {
 					TableRow.LayoutParams params = new TableRow.LayoutParams(
 						TableRow.LayoutParams.MATCH_PARENT,
@@ -533,7 +571,7 @@ public class MainActivity extends Activity
 			}
 		}
 	}
-	
+
 	public static void launchGame(File game) {
 		((MainActivity) mActivity).launchDisk(game, false);
 	}
@@ -543,10 +581,12 @@ public class MainActivity extends Activity
 		{
 			if(IsLoadableExecutableFileName(game.getPath()))
 			{
+				game.setLastModified(System.currentTimeMillis());
 				NativeInterop.loadElf(game.getPath());
 			}
 			else
 			{
+				game.setLastModified(System.currentTimeMillis());
 				NativeInterop.bootDiskImage(game.getPath());
 			}
 			setCurrentDirectory(game.getPath().substring(0, game.getPath().lastIndexOf(File.separator)));
@@ -564,10 +604,19 @@ public class MainActivity extends Activity
 		}
 	}
 	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (newConfig.orientation != currentOrientation) {
+			currentOrientation = newConfig.orientation;
+			prepareFileListView();
+		}
+	}
+
 	private boolean isAndroidTV(Context context) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			UiModeManager uiModeManager = (UiModeManager)
-			context.getSystemService(Context.UI_MODE_SERVICE);
+					context.getSystemService(Context.UI_MODE_SERVICE);
 			if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
 				return true;
 			}
@@ -580,42 +629,34 @@ public class MainActivity extends Activity
 		if (gameInfo == null) {
 			gameInfo = new GameInfo(MainActivity.this);
 		}
-		
+
 		gameListing = (TableLayout) findViewById(R.id.game_grid);
 		if (gameListing != null) {
 			gameListing.removeAllViews();
 		}
-		
+
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		localScale = getResources().getDisplayMetrics().density;
 		int screenWidth = (int) (metrics.widthPixels * localScale + 0.5f);
 		int screenHeight = (int) (metrics.heightPixels * localScale + 0.5f);
-		
+
 		if (screenWidth > screenHeight) {
 			numColumn = 3;
 		} else {
 			numColumn = 2;
 		}
-		
+
 		if (isAndroidTV(getApplicationContext())) {
 			numColumn += 1;
 		}
-		
+
 		String sdcard = getCurrentDirectory();
 		if (!sdcard.equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
 			isConfigured = true;
 		}
-		
+
 		new ImageFinder(R.array.disks).execute(sdcard);
-		
-		if (!mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-			if (!isConfigured) {
-				getActionBar().setTitle(getString(R.string.menu_title_look));
-			} else {
-				getActionBar().setTitle(getString(R.string.menu_title_shut));
-			}
-		}
 	}
 	
 	public void generateErrorLog() {

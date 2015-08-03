@@ -25,6 +25,9 @@
 	<string name="menu_title_shut">Games</string>
 	<string name="menu_title_look">Search</string>
 	
+	<string name="file_list_recent">Recent</string>
+	<string name="file_list_default">Unsorted</string>
+	
 	<string name="report_issue">Previous Crash Detected</string>
 	
 	<string name="dismiss">Dismiss</string>
