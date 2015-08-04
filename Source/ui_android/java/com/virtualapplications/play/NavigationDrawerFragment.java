@@ -100,7 +100,7 @@ public class NavigationDrawerFragment extends Fragment {
                 android.R.id.text1,
                 new String[]{
                         getString(R.string.file_list_recent),
-                        getString(R.string.file_list_default),
+                        getString(R.string.file_list_homebrew),
 						getString(R.string.file_list_default),
                 }));
         //mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);

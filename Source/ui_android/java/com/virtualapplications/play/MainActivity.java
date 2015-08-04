@@ -49,8 +49,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	protected NavigationDrawerFragment mNavigationDrawerFragment;
 	private UncaughtExceptionHandler mUEHandler;
 	
-	public static final int SORT_NONE = 0;
-	public static final int SORT_RECENT = 1;
+	public static final int SORT_RECENT = 0;
+	public static final int SORT_HOMEBREW = 1;
+	public static final int SORT_NONE = 2;
 	private int sortMethod = SORT_NONE;
 	
 	@Override 
@@ -299,6 +300,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				prepareFileListView();
 				break;
 			case 1:
+				sortMethod = SORT_HOMEBREW;
+				prepareFileListView();
+				break;
+			case 2:
 				sortMethod = SORT_NONE;
 				prepareFileListView();
 				break;
@@ -655,7 +660,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			isConfigured = true;
 		}
 
-		new ImageFinder(R.array.disks).execute(sdcard);
+		if (sortMethod == SORT_HOMEBREW) {
+			new ImageFinder(R.array.homebrew).execute(sdcard);
+		} else {
+			new ImageFinder(R.array.disks).execute(sdcard);
+		}
+		
 	}
 	
 	public void generateErrorLog() {
