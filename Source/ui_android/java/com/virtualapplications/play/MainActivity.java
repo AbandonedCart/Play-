@@ -49,6 +49,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	protected NavigationDrawerFragment mNavigationDrawerFragment;
 	private UncaughtExceptionHandler mUEHandler;
 	
+	private List<File> currentGames = new ArrayList<File>();
+	
 	public static final int SORT_RECENT = 0;
 	public static final int SORT_HOMEBREW = 1;
 	public static final int SORT_NONE = 2;
@@ -136,7 +138,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		gameInfo = new GameInfo(MainActivity.this);
 		getContentResolver().call(Games.GAMES_URI, "importDb", null, null);
 
-		prepareFileListView();
+		prepareFileListView(false);
 		if (!mNavigationDrawerFragment.isDrawerOpen()) {
 			if (!isConfigured) {
 				getSupportActionBar().setTitle(getString(R.string.menu_title_look));
@@ -262,7 +264,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	public static void resetDirectory() {
 		((MainActivity) mActivity).clearCurrentDirectory();
 		((MainActivity) mActivity).isConfigured = false;
-		((MainActivity) mActivity).prepareFileListView();
+		((MainActivity) mActivity).prepareFileListView(false);
 	}
 
 	private void clearCoverCache() {
@@ -297,15 +299,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		switch (position) {
 			case 0:
 				sortMethod = SORT_RECENT;
-				prepareFileListView();
+				prepareFileListView(false);
 				break;
 			case 1:
 				sortMethod = SORT_HOMEBREW;
-				prepareFileListView();
+				prepareFileListView(false);
 				break;
 			case 2:
 				sortMethod = SORT_NONE;
-				prepareFileListView();
+				prepareFileListView(false);
 				break;
 		}
 	}
@@ -427,61 +429,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			}
 			FileUtils fileUtils = new FileUtils();
 			Collection<File> files = fileUtils.listFiles(storage, filter, -1);
-			if (sortMethod == SORT_RECENT) {
-				@SuppressWarnings("unchecked")
-				CompositeFileComparator comparator = new CompositeFileComparator(
-					SizeFileComparator.SIZE_REVERSE, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
-				comparator.sort((List<File>) files);
-			}
 			return (List<File>) files;
-		}
-
-		private View createListItem(final File game, final int index) {
-
-			if (!isConfigured) {
-
-				final View childview = MainActivity.this.getLayoutInflater().inflate(
-						R.layout.file_list_item, null, false);
-
-				((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
-
-				childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
-					public void onClick(View view) {
-						setCurrentDirectory(game.getPath().substring(0,
-								game.getPath().lastIndexOf(File.separator)));
-						isConfigured = true;
-						prepareFileListView();
-						return;
-					}
-				});
-
-				return childview;
-			}
-
-			final View childview = MainActivity.this.getLayoutInflater().inflate(
-					R.layout.game_list_item, null, false);
-
-			((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
-
-			final String[] gameStats = gameInfo.getGameInfo(game, childview);
-
-			if (gameStats != null) {
-				childview.findViewById(R.id.childview).setOnLongClickListener(
-						gameInfo.configureLongClick(gameStats[1], gameStats[2], game));
-
-				if (!gameStats[3].equals("404")) {
-					gameInfo.getImage(gameStats[0], childview, gameStats[3]);
-					((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
-				}
-			}
-
-			childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
-				public void onClick(View view) {
-					launchDisk(game, false);
-					return;
-				}
-			});
-			return childview;
 		}
 
 		protected void onPreExecute() {
@@ -511,7 +459,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				}
 			}
 			
-			
 			return (List<File>) files;
 		}
 
@@ -521,59 +468,118 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				progDialog.dismiss();
 			}
 			if (images != null && !images.isEmpty()) {
+				currentGames = images;
 				// Create the list of acceptable images
-
-				Collections.sort(images);
-
-				TableRow game_row = new TableRow(MainActivity.this);
-				if (isConfigured) {
-					game_row.setGravity(Gravity.CENTER);
-				}
-				int pad = (int) (10 * localScale + 0.5f);
-				game_row.setPadding(0, 0, 0, pad);
-
-				if (!isConfigured) {
-					TableRow.LayoutParams params = new TableRow.LayoutParams(
-						TableRow.LayoutParams.MATCH_PARENT,
-						TableRow.LayoutParams.WRAP_CONTENT);
-					params.gravity = Gravity.CENTER_VERTICAL;
-
-					for (int i = 0; i < images.size(); i++)
-					{
-						game_row.addView(createListItem(images.get(i), i));
-						gameListing.addView(game_row, params);
-						game_row = new TableRow(MainActivity.this);
-						game_row.setPadding(0, 0, 0, pad);
-					}
-				} else {
-					TableRow.LayoutParams params = new TableRow.LayoutParams(
-						TableRow.LayoutParams.WRAP_CONTENT,
-						TableRow.LayoutParams.WRAP_CONTENT);
-					params.gravity = Gravity.CENTER;
-
-					int column = 0;
-					for (int i = 0; i < images.size(); i++)
-					{
-						if (column == numColumn)
-						{
-							gameListing.addView(game_row, params);
-							column = 0;
-							game_row = new TableRow(MainActivity.this);
-							game_row.setGravity(Gravity.CENTER);
-							game_row.setPadding(0, 0, 0, pad);
-						}
-						game_row.addView(createListItem(images.get(i), i));
-						column ++;
-					}
-					if (column != 0) {
-						gameListing.addView(game_row, params);
-					}
-				}
-				gameListing.invalidate();
+				populateImages(images);
 			} else {
 				// Display warning that no disks exist
 			}
 		}
+	}
+	
+	private View createListItem(final File game, final int index) {
+		
+		if (!isConfigured) {
+			
+			final View childview = MainActivity.this.getLayoutInflater().inflate(
+										R.layout.file_list_item, null, false);
+			
+			((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
+			
+			childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
+				public void onClick(View view) {
+					setCurrentDirectory(game.getPath().substring(0,
+						game.getPath().lastIndexOf(File.separator)));
+					isConfigured = true;
+					prepareFileListView(false);
+					return;
+				}
+			});
+			
+			return childview;
+		}
+		
+		final View childview = MainActivity.this.getLayoutInflater().inflate(
+									R.layout.game_list_item, null, false);
+		
+		((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
+		
+		final String[] gameStats = gameInfo.getGameInfo(game, childview);
+		
+		if (gameStats != null) {
+			childview.findViewById(R.id.childview).setOnLongClickListener(
+				gameInfo.configureLongClick(gameStats[1], gameStats[2], game));
+			
+			if (!gameStats[3].equals("404")) {
+				gameInfo.getImage(gameStats[0], childview, gameStats[3]);
+				((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
+			}
+		}
+		
+		childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
+			public void onClick(View view) {
+				launchDisk(game, false);
+				return;
+			}
+		});
+		return childview;
+	}
+	
+	private void populateImages(List<File> images) {
+		if (sortMethod == SORT_RECENT) {
+			@SuppressWarnings("unchecked")
+			CompositeFileComparator comparator = new CompositeFileComparator(
+				SizeFileComparator.SIZE_REVERSE, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+			comparator.sort(images);
+		} else {
+			Collections.sort(images);
+		}
+		
+		TableRow game_row = new TableRow(MainActivity.this);
+		if (isConfigured) {
+			game_row.setGravity(Gravity.CENTER);
+		}
+		int pad = (int) (10 * localScale + 0.5f);
+		game_row.setPadding(0, 0, 0, pad);
+		
+		if (!isConfigured) {
+			TableRow.LayoutParams params = new TableRow.LayoutParams(
+				 TableRow.LayoutParams.MATCH_PARENT,
+				 TableRow.LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.CENTER_VERTICAL;
+			
+			for (int i = 0; i < images.size(); i++)
+			{
+				game_row.addView(createListItem(images.get(i), i));
+				gameListing.addView(game_row, params);
+				game_row = new TableRow(MainActivity.this);
+				game_row.setPadding(0, 0, 0, pad);
+			}
+		} else {
+			TableRow.LayoutParams params = new TableRow.LayoutParams(
+				TableRow.LayoutParams.WRAP_CONTENT,
+				TableRow.LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.CENTER;
+			
+			int column = 0;
+			for (int i = 0; i < images.size(); i++)
+			{
+				if (column == numColumn)
+				{
+					gameListing.addView(game_row, params);
+					column = 0;
+					game_row = new TableRow(MainActivity.this);
+					game_row.setGravity(Gravity.CENTER);
+					game_row.setPadding(0, 0, 0, pad);
+				}
+				game_row.addView(createListItem(images.get(i), i));
+				column ++;
+			}
+			if (column != 0) {
+				gameListing.addView(game_row, params);
+			}
+		}
+		gameListing.invalidate();
 	}
 
 	public static void launchGame(File game) {
@@ -613,7 +619,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		super.onConfigurationChanged(newConfig);
 		if (newConfig.orientation != currentOrientation) {
 			currentOrientation = newConfig.orientation;
-			prepareFileListView();
+			if (currentGames != null && !currentGames.isEmpty()) {
+				prepareFileListView(true);
+			} else {
+				prepareFileListView(false);
+			}
 		}
 	}
 
@@ -628,7 +638,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		return false;
 	}
 
-	private void prepareFileListView()
+	private void prepareFileListView(boolean retainList)
 	{
 		if (gameInfo == null) {
 			gameInfo = new GameInfo(MainActivity.this);
@@ -660,10 +670,14 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			isConfigured = true;
 		}
 
-		if (sortMethod == SORT_HOMEBREW) {
-			new ImageFinder(R.array.homebrew).execute(sdcard);
+		if (isConfigured && retainList) {
+			populateImages(currentGames);
 		} else {
-			new ImageFinder(R.array.disks).execute(sdcard);
+			if (sortMethod == SORT_HOMEBREW) {
+				new ImageFinder(R.array.homebrew).execute(sdcard);
+			} else {
+				new ImageFinder(R.array.disks).execute(sdcard);
+			}
 		}
 		
 	}
