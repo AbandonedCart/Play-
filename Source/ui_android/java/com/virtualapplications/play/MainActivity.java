@@ -371,7 +371,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		} else {
 			finish();
 		}
-		return;
 	}
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
