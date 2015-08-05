@@ -75,9 +75,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 		setContentView(R.layout.main);
 
-//		Toolbar toolbar = getSupportToolbar();
-//		setSupportActionBar(toolbar);
-//		toolbar.bringToFront();
+		Toolbar toolbar = getSupportToolbar();
+		setSupportActionBar(toolbar);
+		toolbar.bringToFront();
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment)
 				getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -120,16 +120,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			};
 			Thread.setDefaultUncaughtExceptionHandler(mUEHandler);
 		}
-	}
-
-	@Override 
-	protected void onPostCreate(Bundle savedInstanceState) 
-	{	
-		super.onPostCreate(savedInstanceState);
-
-		Toolbar toolbar = getSupportToolbar();
-		setSupportActionBar(toolbar);
-		toolbar.bringToFront();
 		
 		NativeInterop.setFilesDirPath(Environment.getExternalStorageDirectory().getAbsolutePath());
 
@@ -179,7 +169,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		a.recycle();
 		float[] hsv = new float[3];
 		Color.colorToHSV(attributeResourceId, hsv);
-		hsv[2] *= 0.8f;// make it darker
+		hsv[2] *= 1.0f;// make it darker
 		colors[0] = Color.HSVToColor(hsv);
 		/*
 		using this will blend the top of the gradient with actionbar (aka using the same color)
