@@ -545,6 +545,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			images.toArray(games);
 			GamesAdapter adapter = new GamesAdapter(MainActivity.this, R.layout.game_list_item, games);
 			gameGrid.setAdapter(adapter);
+			gameGrid.invalidate();
 		} else {
 			gameListing.setVisibility(View.VISIBLE);
 			gameGrid.setVisibility(View.GONE);
