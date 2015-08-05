@@ -80,9 +80,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 		setContentView(R.layout.main);
 
-		Toolbar toolbar = getSupportToolbar();
-		setSupportActionBar(toolbar);
-		toolbar.bringToFront();
+//		Toolbar toolbar = getSupportToolbar();
+//		setSupportActionBar(toolbar);
+//		toolbar.bringToFront();
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment)
 				getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -133,7 +133,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		super.onPostCreate(savedInstanceState);
 		
 
-		adjustUI();
+		Toolbar toolbar = getSupportToolbar();
+		setSupportActionBar(toolbar);
+		toolbar.bringToFront();
 		
 		NativeInterop.setFilesDirPath(Environment.getExternalStorageDirectory().getAbsolutePath());
 
@@ -163,7 +165,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			} else {
 				getSupportActionBar().setTitle(getString(R.string.menu_title_shut));
 			}
-		prepareFileListView();
 	}
 
 	public int getStatusBarHeight() {
@@ -174,7 +175,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 	}
 
-	private void adjustUI() {
+	private Toolbar getSupportToolbar() {
 		//this sets toolbar margin, but in effect moving the DrawerLayout
 		int statusBarHeight = getStatusBarHeight();
 
@@ -237,6 +238,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				game_scroller.getPaddingBottom() + p.y);
 			}
 		}
+		return toolbar;
 	}
 
 	public static Point getNavigationBarSize(Context context) {
@@ -282,7 +284,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		return size;
 	}
 
-	private static long getBuildDate(Context context) 
+	private static long getBuildDate(Context context)
 	{
 		try
 		{
@@ -479,21 +481,21 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		return result;
 	}
 	
-	private Toolbar getSupportToolbar() {
-		int statusBarHeight = getStatusBarHeight();
-		
-		Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
-		ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
-		mlp.bottomMargin = - statusBarHeight;
-		toolbar.setLayoutParams(mlp);
-
-		FrameLayout content = (FrameLayout) findViewById(R.id.content_frame);
-		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
-		dlp.topMargin = statusBarHeight;
-		content.setLayoutParams(dlp);
-
-		return toolbar;
-	}
+//	private Toolbar getSupportToolbar() {
+//		int statusBarHeight = getStatusBarHeight();
+//		
+//		Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+//		ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+//		mlp.bottomMargin = - statusBarHeight;
+//		toolbar.setLayoutParams(mlp);
+//
+//		FrameLayout content = (FrameLayout) findViewById(R.id.content_frame);
+//		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
+//		dlp.topMargin = statusBarHeight;
+//		content.setLayoutParams(dlp);
+//
+//		return toolbar;
+//	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
