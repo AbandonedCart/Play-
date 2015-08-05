@@ -15,6 +15,7 @@ import android.view.*;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.*;
+import android.widget.GridView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -39,10 +40,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	private static final String PREFERENCE_CURRENT_DIRECTORY = "CurrentDirectory";
 
 	private SharedPreferences _preferences;
-	private TableLayout gameListing;
 	static Activity mActivity;
 	private boolean isConfigured = false;
-	private int numColumn = 0;
 	private float localScale;
 	private int currentOrientation;
 	private GameInfo gameInfo;
@@ -477,12 +476,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 	}
 	
-	private View createListItem(final File game, final int index) {
+	private View createListItem(final File game, final int index, final View childview) {
 		
 		if (!isConfigured) {
-			
-			final View childview = MainActivity.this.getLayoutInflater().inflate(
-										R.layout.file_list_item, null, false);
 			
 			((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
 			
@@ -497,32 +493,30 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			});
 			
 			return childview;
-		}
+		} else {
 		
-		final View childview = MainActivity.this.getLayoutInflater().inflate(
-									R.layout.game_list_item, null, false);
-		
-		((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
-		
-		final String[] gameStats = gameInfo.getGameInfo(game, childview);
-		
-		if (gameStats != null) {
-			childview.findViewById(R.id.childview).setOnLongClickListener(
-				gameInfo.configureLongClick(gameStats[1], gameStats[2], game));
+			((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
 			
-			if (!gameStats[3].equals("404")) {
-				gameInfo.getImage(gameStats[0], childview, gameStats[3]);
-				((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
+			final String[] gameStats = gameInfo.getGameInfo(game, childview);
+			
+			if (gameStats != null) {
+				childview.findViewById(R.id.childview).setOnLongClickListener(
+					gameInfo.configureLongClick(gameStats[1], gameStats[2], game));
+				
+				if (!gameStats[3].equals("404")) {
+					gameInfo.getImage(gameStats[0], childview, gameStats[3]);
+					((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
+				}
 			}
+			
+			childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
+				public void onClick(View view) {
+					launchDisk(game, false);
+					return;
+				}
+			});
+			return childview;
 		}
-		
-		childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
-			public void onClick(View view) {
-				launchDisk(game, false);
-				return;
-			}
-		});
-		return childview;
 	}
 	
 	private void populateImages(List<File> images) {
@@ -535,14 +529,28 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			Collections.sort(images);
 		}
 		
-		TableRow game_row = new TableRow(MainActivity.this);
-		if (isConfigured) {
-			game_row.setGravity(Gravity.CENTER);
+		TableLayout gameListing = (TableLayout) findViewById(R.id.file_grid);
+		if (gameListing != null && gameListing.isShown()) {
+			gameListing.removeAllViews();
 		}
-		int pad = (int) (10 * localScale + 0.5f);
-		game_row.setPadding(0, 0, 0, pad);
+		GridView gameGrid = (GridView) findViewById(R.id.game_grid);
+		if (gameGrid != null && gameGrid.isShown()) {
+			gameGrid.setAdapter(null);
+		}
 		
-		if (!isConfigured) {
+		if (isConfigured) {
+			gameGrid.setVisibility(View.VISIBLE);
+			gameListing.setVisibility(View.GONE);
+			File[] games = new File[images.size()];
+			images.toArray(games);
+			GamesAdapter adapter = new GamesAdapter(MainActivity.this, R.layout.game_list_item, games);
+			gameGrid.setAdapter(adapter);
+		} else {
+			gameListing.setVisibility(View.VISIBLE);
+			gameGrid.setVisibility(View.GONE);
+			TableRow game_row = new TableRow(MainActivity.this);
+			int pad = (int) (10 * localScale + 0.5f);
+			game_row.setPadding(0, 0, 0, pad);
 			TableRow.LayoutParams params = new TableRow.LayoutParams(
 				 TableRow.LayoutParams.MATCH_PARENT,
 				 TableRow.LayoutParams.WRAP_CONTENT);
@@ -550,36 +558,39 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			
 			for (int i = 0; i < images.size(); i++)
 			{
-				game_row.addView(createListItem(images.get(i), i));
+				View childview = MainActivity.this.getLayoutInflater().inflate(
+						R.layout.file_list_item, null, false);
+				game_row.addView(createListItem(images.get(i), i, childview));
 				gameListing.addView(game_row, params);
 				game_row = new TableRow(MainActivity.this);
 				game_row.setPadding(0, 0, 0, pad);
 			}
-		} else {
-			TableRow.LayoutParams params = new TableRow.LayoutParams(
-				TableRow.LayoutParams.WRAP_CONTENT,
-				TableRow.LayoutParams.WRAP_CONTENT);
-			params.gravity = Gravity.CENTER;
-			
-			int column = 0;
-			for (int i = 0; i < images.size(); i++)
-			{
-				if (column == numColumn)
-				{
-					gameListing.addView(game_row, params);
-					column = 0;
-					game_row = new TableRow(MainActivity.this);
-					game_row.setGravity(Gravity.CENTER);
-					game_row.setPadding(0, 0, 0, pad);
-				}
-				game_row.addView(createListItem(images.get(i), i));
-				column ++;
-			}
-			if (column != 0) {
-				gameListing.addView(game_row, params);
-			}
+			gameListing.invalidate();
 		}
-		gameListing.invalidate();
+	}
+	
+	public class GamesAdapter extends ArrayAdapter<File> {
+		
+		private File[] games;
+		
+		public GamesAdapter(Context context, int ResourceId, File[] images) {
+			super(context, ResourceId, images);
+			this.games = images;
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.game_list_item, null);
+			}
+			final File game = games[position];
+			if (game != null) {
+				createListItem(game, position, v);
+			}
+			return v;
+		}
 	}
 
 	public static void launchGame(File game) {
@@ -642,27 +653,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	{
 		if (gameInfo == null) {
 			gameInfo = new GameInfo(MainActivity.this);
-		}
-
-		gameListing = (TableLayout) findViewById(R.id.game_grid);
-		if (gameListing != null) {
-			gameListing.removeAllViews();
-		}
-
-		DisplayMetrics metrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		localScale = getResources().getDisplayMetrics().density;
-		int screenWidth = (int) (metrics.widthPixels * localScale + 0.5f);
-		int screenHeight = (int) (metrics.heightPixels * localScale + 0.5f);
-
-		if (screenWidth > screenHeight) {
-			numColumn = 3;
-		} else {
-			numColumn = 2;
-		}
-
-		if (isAndroidTV(getApplicationContext())) {
-			numColumn += 1;
 		}
 
 		String sdcard = getCurrentDirectory();
