@@ -72,11 +72,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		//Log.w(Constants.TAG, "MainActivity - onCreate");
 
 		currentOrientation = getResources().getConfiguration().orientation;
-//		if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-//		} else {
-//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-//		}
 
 		setContentView(R.layout.main);
 
@@ -131,7 +126,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	protected void onPostCreate(Bundle savedInstanceState) 
 	{	
 		super.onPostCreate(savedInstanceState);
-		
 
 		Toolbar toolbar = getSupportToolbar();
 		setSupportActionBar(toolbar);
@@ -165,13 +159,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			} else {
 				getSupportActionBar().setTitle(getString(R.string.menu_title_shut));
 			}
-	}
-
-	public int getStatusBarHeight() {
-		int result = 0;
-		int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-		if (resourceId > 0) {
-			result = getResources().getDimensionPixelSize(resourceId);
 		}
 	}
 
@@ -229,14 +216,21 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				navigation_drawer.getPaddingRight(), 
 				navigation_drawer.getPaddingBottom() + p.y);
 
-		View game_scroller = findViewById(R.id.game_grid);
-		game_scroller.setPadding(
-			game_scroller.getPaddingLeft(), 
-			game_scroller.getPaddingTop(), 
-			game_scroller.getPaddingRight(), 
-			game_scroller.getPaddingBottom() + p.y);
+		View file_listing = findViewById(R.id.file_grid);
+		file_listing.setPadding(
+			file_listing.getPaddingLeft(),
+			file_listing.getPaddingTop(),
+			file_listing.getPaddingRight(),
+			file_listing.getPaddingBottom() + p.y);
+			
+		View game_listing = findViewById(R.id.game_grid);
+		game_listing.setPadding(
+			 game_listing.getPaddingLeft(),
+			 game_listing.getPaddingTop(),
+			 game_listing.getPaddingRight(),
+			 game_listing.getPaddingBottom() + p.y);
 		}
-		return toolbar;
+		return (Toolbar) toolbar;
 	}
 
 	public static Point getNavigationBarSize(Context context) {
