@@ -164,18 +164,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		content.setLayoutParams(dlp);
 
 		int[] colors = new int[2];// you can increase array size to add more colors to gradient.
-		TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorPrimary});
-		int attributeResourceId = a.getColor(0, 0);
+		TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientStart});
+		int attributeResourceIdStart = a.getColor(0, 0);
 		a.recycle();
-		float[] hsv = new float[3];
-		Color.colorToHSV(attributeResourceId, hsv);
-		hsv[2] *= 1.0f;// make it darker
-		colors[0] = Color.HSVToColor(hsv);
-		/*
-		using this will blend the top of the gradient with actionbar (aka using the same color)
-		colors[0] = Color.parseColor("#" + Integer.toHexString(attributeResourceId)
-		 */
-		colors[1] = Color.rgb(20,20,20);
+//		float[] hsv = new float[3];
+//		Color.colorToHSV(attributeResourceIdStart, hsv);
+//		hsv[2] *= 1.0f;// make it darker
+//		colors[0] = Color.HSVToColor(hsv);
+		colors[0] = Color.parseColor("#" + Integer.toHexString(attributeResourceIdStart));
+		TypedArray b = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientEnd});
+		int attributeResourceIdEnd = b.getColor(0, 0);
+		b.recycle();
+//		colors[1] = Color.rgb(20,20,20);
+		colors[1] = Color.parseColor("#" + Integer.toHexString(attributeResourceIdEnd));
 		GradientDrawable gradientbg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
 		content.setBackground(gradientbg);
 

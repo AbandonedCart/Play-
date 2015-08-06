@@ -7,10 +7,13 @@
         <!-- Customize your theme here. -->
         <!-- colorPrimary is used for the default action bar background -->
         <item name="colorPrimary">@color/action_bar</item>
-
         <!-- colorPrimaryDark is used for the status bar -->
         <item name="colorPrimaryDark">#c84dff</item>
         <!--item name="colorPrimaryDark">#ff000000</item-->
+		<!-- colorGradientStart is used for the background top color -->
+		<item name="colorGradientStart">#15a9cf</item>
+		<!-- colorGradientEnd is used for the background bottom color -->
+		<item name="colorGradientEnd">#45438e</item>
 
     </style>
 
@@ -25,9 +28,12 @@
         <!-- Customize your theme here. -->
         <!-- colorPrimary is used for the default action bar background -->
         <item name="colorPrimary">@color/action_bar_Blue</item>
-
         <!-- colorPrimaryDark is used for the status bar -->
         <item name="colorPrimaryDark">#2d76ae</item>
+		<!-- colorGradientStart is used for the background top color -->
+		<item name="colorGradientStart">#15a9cf</item>
+		<!-- colorGradientEnd is used for the background bottom color -->
+		<item name="colorGradientEnd">#45438e</item>
 
     </style>
 
