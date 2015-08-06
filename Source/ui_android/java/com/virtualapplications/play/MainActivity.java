@@ -479,7 +479,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
 		if (NavigationDrawerFragment.mDrawerLayout != null && mNavigationDrawerFragment.isDrawerOpen()) {
 			NavigationDrawerFragment.mDrawerLayout.closeDrawer(NavigationDrawerFragment.mFragmentContainerView);
 		} else {
