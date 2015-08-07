@@ -42,7 +42,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	private SharedPreferences _preferences;
 	static Activity mActivity;
 	private boolean isConfigured = false;
-	private float localScale;
 	private int currentOrientation;
 	private GameInfo gameInfo;
 	protected NavigationDrawerFragment mNavigationDrawerFragment;
@@ -54,7 +53,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	public static final int SORT_HOMEBREW = 1;
 	public static final int SORT_NONE = 2;
 	private int sortMethod = SORT_NONE;
-	
+
+	//To prevent multiple padding buildups on multiple rotations.
+	private int relative_layout_original_right_padding;
+	private int navigation_drawer_original_bottom_padding;
+
 	@Override 
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -104,16 +107,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		{
 			NativeInterop.createVirtualMachine();
 		}
-		
-		Intent intent = getIntent();
-		if (intent.getAction() != null) {
-			if (intent.getAction().equals(Intent.ACTION_VIEW)) {
-				launchDisk(new File(intent.getData().getPath()), true);
-				getIntent().setData(null);
-				setIntent(null);
-			}
-		}
-		
+
 //		if (isAndroidTV(this)) {
 //			// Load the menus for Android TV
 //		} else {
@@ -136,7 +130,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 					("#" + Integer.toHexString(attributeResourceId)).replace("#ff", "#8e")
 			));
 //		}
-
 		gameInfo = new GameInfo(MainActivity.this);
 		getContentResolver().call(Games.GAMES_URI, "importDb", null, null);
 
@@ -176,33 +169,38 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		This will take account of nav bar to right/bottom
 		Not sure if there is a way to detect left/top? thus always pad right/bottom for now
 		*/
+		View relative_layout = findViewById(R.id.relative_layout);
 		if (p.x != 0){
-			View relative_layout = findViewById(R.id.relative_layout);
+			if (relative_layout_original_right_padding == 0){
+				relative_layout_original_right_padding = relative_layout.getPaddingRight();
+			}
 			relative_layout.setPadding(
-					relative_layout.getPaddingLeft(), 
-					relative_layout.getPaddingTop(), 
-					relative_layout.getPaddingRight() + p.x, 
-					relative_layout.getPaddingBottom());
+				relative_layout.getPaddingLeft(),
+				relative_layout.getPaddingTop(),
+				relative_layout_original_right_padding + p.x,
+				relative_layout.getPaddingBottom());
+
+			navigation_drawer.setPadding(
+				navigation_drawer.getPaddingLeft(),
+				navigation_drawer.getPaddingTop(),
+				navigation_drawer.getPaddingRight(),
+				navigation_drawer_original_bottom_padding);
 		} else if (p.y != 0){
+			navigation_drawer.invalidate();
+			if (navigation_drawer_original_bottom_padding == 0){
+				navigation_drawer_original_bottom_padding = navigation_drawer.getPaddingRight();
+			}
 			navigation_drawer.setPadding(
 				navigation_drawer.getPaddingLeft(), 
 				navigation_drawer.getPaddingTop(), 
-				navigation_drawer.getPaddingRight(), 
-				navigation_drawer.getPaddingBottom() + p.y);
+				navigation_drawer.getPaddingRight(),
+				navigation_drawer_original_bottom_padding + p.y);
 
-		View file_listing = findViewById(R.id.file_grid);
-		file_listing.setPadding(
-			file_listing.getPaddingLeft(),
-			file_listing.getPaddingTop(),
-			file_listing.getPaddingRight(),
-			file_listing.getPaddingBottom() + p.y);
-			
-		View game_listing = findViewById(R.id.game_grid);
-		game_listing.setPadding(
-			 game_listing.getPaddingLeft(),
-			 game_listing.getPaddingTop(),
-			 game_listing.getPaddingRight(),
-			 game_listing.getPaddingBottom() + p.y);
+			relative_layout.setPadding(
+				relative_layout.getPaddingLeft(),
+				relative_layout.getPaddingTop(),
+				relative_layout_original_right_padding,
+				relative_layout.getPaddingBottom());
 		}
 		return (Toolbar) toolbar;
 	}
@@ -327,6 +325,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		displaySimpleMessage("About Play!", aboutMessage);
 	}
 
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		mNavigationDrawerFragment.onConfigurationChanged(newConfig);
+		if (newConfig.orientation != currentOrientation) {
+			currentOrientation = newConfig.orientation;
+			getSupportToolbar();
+			if (currentGames != null && !currentGames.isEmpty()) {
+				prepareFileListView(true);
+			} else {
+				prepareFileListView(false);
+			}
+		}
+		
+	}
+	
 	private String getCurrentDirectory()
 	{
 		if (_preferences != null) {
@@ -405,8 +420,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	public static void clearCache() {
 		((MainActivity) mActivity).clearCoverCache();
 	}
-
-	private static boolean IsLoadableExecutableFileName(String fileName)
+	
+	static boolean IsLoadableExecutableFileName(String fileName)
 	{
 		return fileName.toLowerCase().endsWith(".elf");
 	}
@@ -455,7 +470,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 	public void restoreActionBar() {
 		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setIcon(R.drawable.ic_logo);
 		actionBar.setTitle(R.string.menu_title_shut);
@@ -586,8 +600,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 	}
 	
-	private View createListItem(final File game, final int index, final View childview) {
-		
+	private View createListItem(final File game, final View childview) {
 		if (!isConfigured) {
 			
 			((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
@@ -621,7 +634,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			
 			childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
 				public void onClick(View view) {
-					launchDisk(game, false);
+					launchDisk(game);
 					return;
 				}
 			});
@@ -638,45 +651,49 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		} else {
 			Collections.sort(images);
 		}
-		
-		LinearLayout gameListing = (LinearLayout) findViewById(R.id.file_grid);
-		if (gameListing != null && gameListing.isShown()) {
-			gameListing.removeAllViews();
-		}
 		GridView gameGrid = (GridView) findViewById(R.id.game_grid);
 		if (gameGrid != null && gameGrid.isShown()) {
 			gameGrid.setAdapter(null);
 		}
-		
-		if (isConfigured) {
-			gameGrid.setVisibility(View.VISIBLE);
-			gameListing.setVisibility(View.GONE);
-			File[] games = new File[images.size()];
-			images.toArray(games);
-			GamesAdapter adapter = new GamesAdapter(MainActivity.this, R.layout.game_list_item, games);
-			gameGrid.setAdapter(adapter);
-			gameGrid.invalidate();
-		} else {
-			gameListing.setVisibility(View.VISIBLE);
-			gameGrid.setVisibility(View.GONE);
-			
-			for (int i = 0; i < images.size(); i++)
-			{
-				View childview = MainActivity.this.getLayoutInflater().inflate(
-						R.layout.file_list_item, null, false);
-				gameListing.addView(createListItem(images.get(i), i, childview));
-			}
-			gameListing.invalidate();
+
+		int padding = getNavigationBarSize(this).y;
+		GamesAdapter adapter = new GamesAdapter(MainActivity.this, isConfigured ? R.layout.game_list_item : R.layout.file_list_item, images, padding);
+		/*
+		gameGrid.setNumColumns(-1);
+		-1 = autofit
+		or set a number if you like
+		 */
+		if (isConfigured){
+			gameGrid.setColumnWidth((int) getResources().getDimension(R.dimen.cover_width));
 		}
+		gameGrid.setAdapter(adapter);
+		gameGrid.invalidate();
+
 	}
 	
 	public class GamesAdapter extends ArrayAdapter<File> {
+
+		private final int layoutid;
+		private final int padding;
+		private List<File> games;
 		
-		private File[] games;
-		
-		public GamesAdapter(Context context, int ResourceId, File[] images) {
+		public GamesAdapter(Context context, int ResourceId, List<File> images, int padding) {
 			super(context, ResourceId, images);
 			this.games = images;
+			this.layoutid = ResourceId;
+			this.padding = padding;
+		}
+
+		public int getCount() {
+			return games.size();
+		}
+
+		public File getItem(int position) {
+			return games.get(position);
+		}
+
+		public long getItemId(int position) {
+			return position;
 		}
 		
 		@Override
@@ -684,21 +701,28 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			View v = convertView;
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.game_list_item, null);
+				v = vi.inflate(layoutid, null);
 			}
-			final File game = games[position];
+			final File game = games.get(position);
 			if (game != null) {
-				createListItem(game, position, v);
+				createListItem(game, v);
+			}
+			if (position == games.size() - 1){
+				v.setPadding(
+						v.getPaddingLeft(),
+						v.getPaddingTop(),
+						v.getPaddingRight(),
+						v.getPaddingBottom() + padding);
 			}
 			return v;
 		}
 	}
 
 	public static void launchGame(File game) {
-		((MainActivity) mActivity).launchDisk(game, false);
+		((MainActivity)mActivity).launchDisk(game);
 	}
 	
-	private void launchDisk (File game, boolean terminate) {
+	private void launchDisk (File game) {
 		try
 		{
 			if(IsLoadableExecutableFileName(game.getPath()))
@@ -721,24 +745,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		//TODO: Catch errors that might happen while loading files
 		Intent intent = new Intent(getApplicationContext(), EmulatorActivity.class);
 		startActivity(intent);
-		if (terminate) {
-			finish();
-		}
 	}
 	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		if (newConfig.orientation != currentOrientation) {
-			currentOrientation = newConfig.orientation;
-			if (currentGames != null && !currentGames.isEmpty()) {
-				prepareFileListView(true);
-			} else {
-				prepareFileListView(false);
-			}
-		}
-	}
-
 	private boolean isAndroidTV(Context context) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			UiModeManager uiModeManager = (UiModeManager)
