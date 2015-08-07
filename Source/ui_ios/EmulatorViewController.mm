@@ -22,6 +22,11 @@ CPS2VM* g_virtualMachine = nullptr;
 	auto view = [[GlEsView alloc] initWithFrame: screenBounds];
 	self.view = view;
 	
+	self.iCadeReader = [[iCadeReaderView alloc] init];
+	[self.view addSubview:self.iCadeReader];
+	self.iCadeReader.delegate = self;
+	self.iCadeReader.active = YES;
+	
 	g_virtualMachine = new CPS2VM();
 	g_virtualMachine->Initialize();
 	g_virtualMachine->CreateGSHandler(CGSH_OpenGLiOS::GetFactoryFunction((CAEAGLLayer*)view.layer));
