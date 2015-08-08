@@ -163,6 +163,7 @@
 		70AD23961B39199300137AA0 /* PsuSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70AD23911B39199300137AA0 /* PsuSaveImporter.cpp */; };
 		70AD23971B39199300137AA0 /* XpsSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70AD23931B39199300137AA0 /* XpsSaveImporter.cpp */; };
 		87C4CC051B7372F500CE6D3C /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C4CC021B7372F500CE6D3C /* iCadeReaderView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		87C4CC2A1B75009100CE6D3C /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C4CC291B75009100CE6D3C /* GameController.framework */; };
 		87C86C0B1B65F3330006233E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0A1B65F3330006233E /* QuartzCore.framework */; };
 		87C86C0D1B65F33A0006233E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0C1B65F33A0006233E /* OpenGLES.framework */; };
 		87C86C0F1B65F3480006233E /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0E1B65F3470006233E /* libbz2.dylib */; };
@@ -170,16 +171,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		87C86C021B65F3130006233E /* PBXContainerItemProxy */ = {
+		87C4CC0F1B7482DE00CE6D3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 87C86BFE1B65F3130006233E /* Framework.xcodeproj */;
+			containerPortal = 87C4CC0B1B7482DE00CE6D3C /* Framework.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = D2AAC07E0554694100DB518D;
 			remoteInfo = Framework;
 		};
-		87C86C081B65F3190006233E /* PBXContainerItemProxy */ = {
+		87C4CC151B7482E600CE6D3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 87C86C041B65F3190006233E /* CodeGen.xcodeproj */;
+			containerPortal = 87C4CC111B7482E600CE6D3C /* CodeGen.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = D2AAC07E0554694100DB518D;
 			remoteInfo = CodeGen;
@@ -494,8 +495,9 @@
 		87C4CC011B7372F500CE6D3C /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		87C4CC021B7372F500CE6D3C /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		87C4CC031B7372F500CE6D3C /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
-		87C86BFE1B65F3130006233E /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = "../../Play-Framework/build_ios/Framework.xcodeproj"; sourceTree = "<group>"; };
-		87C86C041B65F3190006233E /* CodeGen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodeGen.xcodeproj; path = "../../Play-CodeGen/build_ios/CodeGen.xcodeproj"; sourceTree = "<group>"; };
+		87C4CC0B1B7482DE00CE6D3C /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = ../../Framework/build_ios/Framework.xcodeproj; sourceTree = "<group>"; };
+		87C4CC111B7482E600CE6D3C /* CodeGen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodeGen.xcodeproj; path = ../../CodeGen/build_ios/CodeGen.xcodeproj; sourceTree = "<group>"; };
+		87C4CC291B75009100CE6D3C /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		87C86C0A1B65F3330006233E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		87C86C0C1B65F33A0006233E /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		87C86C0E1B65F3470006233E /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
@@ -507,6 +509,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87C4CC2A1B75009100CE6D3C /* GameController.framework in Frameworks */,
 				87C86C111B65F34F0006233E /* UIKit.framework in Frameworks */,
 				87C86C0F1B65F3480006233E /* libbz2.dylib in Frameworks */,
 				87C86C0D1B65F33A0006233E /* OpenGLES.framework in Frameworks */,
@@ -521,7 +524,6 @@
 		70834AA51B1BC70300E8D5C6 = {
 			isa = PBXGroup;
 			children = (
-				87C4CC001B7372F500CE6D3C /* iCade-iOS */,
 				70834B941B1BD3A300E8D5C6 /* Config */,
 				70834B811B1BD2CF00E8D5C6 /* Dependencies */,
 				70834AB01B1BC70300E8D5C6 /* Source Files */,
@@ -540,7 +542,7 @@
 		70834AB01B1BC70300E8D5C6 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				87C64DEE1B6F1FC600FDD99A /* iCade-iOS */,
+				87C4CC001B7372F500CE6D3C /* iCade-iOS */,
 				70834AFC1B1BCD1200E8D5C6 /* Play Core */,
 				70834AFB1B1BCCFF00E8D5C6 /* ui_ios */,
 			);
@@ -676,10 +678,11 @@
 			children = (
 				87C86C101B65F34F0006233E /* UIKit.framework */,
 				87C86C0E1B65F3470006233E /* libbz2.dylib */,
+				87C4CC291B75009100CE6D3C /* GameController.framework */,
 				87C86C0C1B65F33A0006233E /* OpenGLES.framework */,
 				87C86C0A1B65F3330006233E /* QuartzCore.framework */,
-				87C86C041B65F3190006233E /* CodeGen.xcodeproj */,
-				87C86BFE1B65F3130006233E /* Framework.xcodeproj */,
+				87C4CC111B7482E600CE6D3C /* CodeGen.xcodeproj */,
+				87C4CC0B1B7482DE00CE6D3C /* Framework.xcodeproj */,
 				70834CE01B1BD7EE00E8D5C6 /* libz.dylib */,
 			);
 			name = Dependencies;
@@ -935,26 +938,18 @@
 			path = "../Source/ui_ios/iCade-iOS";
 			sourceTree = "<group>";
 		};
-		87C64DEE1B6F1FC600FDD99A /* iCade-iOS */ = {
+		87C4CC0C1B7482DE00CE6D3C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-			);
-			name = "iCade-iOS";
-			path = "../third-party/iCade-iOS";
-			sourceTree = "<group>";
-		};
-		87C86BFF1B65F3130006233E /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				87C86C031B65F3130006233E /* libFramework.a */,
+				87C4CC101B7482DE00CE6D3C /* libFramework.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		87C86C051B65F3190006233E /* Products */ = {
+		87C4CC121B7482E600CE6D3C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				87C86C091B65F3190006233E /* libCodeGen.a */,
+				87C4CC161B7482E600CE6D3C /* libCodeGen.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -990,6 +985,7 @@
 				TargetAttributes = {
 					70834AAD1B1BC70300E8D5C6 = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = USQTU9QQ5N;
 					};
 				};
 			};
@@ -1006,12 +1002,12 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 87C86C051B65F3190006233E /* Products */;
-					ProjectRef = 87C86C041B65F3190006233E /* CodeGen.xcodeproj */;
+					ProductGroup = 87C4CC121B7482E600CE6D3C /* Products */;
+					ProjectRef = 87C4CC111B7482E600CE6D3C /* CodeGen.xcodeproj */;
 				},
 				{
-					ProductGroup = 87C86BFF1B65F3130006233E /* Products */;
-					ProjectRef = 87C86BFE1B65F3130006233E /* Framework.xcodeproj */;
+					ProductGroup = 87C4CC0C1B7482DE00CE6D3C /* Products */;
+					ProjectRef = 87C4CC0B1B7482DE00CE6D3C /* Framework.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1022,18 +1018,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		87C86C031B65F3130006233E /* libFramework.a */ = {
+		87C4CC101B7482DE00CE6D3C /* libFramework.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libFramework.a;
-			remoteRef = 87C86C021B65F3130006233E /* PBXContainerItemProxy */;
+			remoteRef = 87C4CC0F1B7482DE00CE6D3C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		87C86C091B65F3190006233E /* libCodeGen.a */ = {
+		87C4CC161B7482E600CE6D3C /* libCodeGen.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libCodeGen.a;
-			remoteRef = 87C86C081B65F3190006233E /* PBXContainerItemProxy */;
+			remoteRef = 87C4CC151B7482E600CE6D3C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1313,6 +1309,9 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OBJROOT = "$(SYMROOT)";
+				SYMROOT = "$(PROJECT_DIR)/build";
+				VALID_ARCHS = armv7;
 			};
 			name = Debug;
 		};
@@ -1325,6 +1324,9 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OBJROOT = "$(SYMROOT)";
+				SYMROOT = "$(PROJECT_DIR)/build";
+				VALID_ARCHS = armv7;
 			};
 			name = Release;
 		};

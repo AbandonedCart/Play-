@@ -2,9 +2,9 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(LOCAL_PATH)/ExternalDependencies.mk
 
-DEPENDENCIES_PATH := $(realpath $(LOCAL_PATH))/../../../Play-Dependencies
-FRAMEWORK_PATH    := $(realpath $(LOCAL_PATH))/../../../Play-Framework
-CODEGEN_PATH      := $(realpath $(LOCAL_PATH))/../../../Play-CodeGen
+DEPENDENCIES_PATH := $(realpath $(LOCAL_PATH))/../../../Dependencies
+FRAMEWORK_PATH    := $(realpath $(LOCAL_PATH))/../../../Framework
+CODEGEN_PATH      := $(realpath $(LOCAL_PATH))/../../../CodeGen
 
 include $(CLEAR_VARS)
 

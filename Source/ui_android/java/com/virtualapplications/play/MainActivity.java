@@ -71,9 +71,53 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		super.onCreate(savedInstanceState);
 		//Log.w(Constants.TAG, "MainActivity - onCreate");
 
+		_preferences = getSharedPreferences("prefs", MODE_PRIVATE);
 		currentOrientation = getResources().getConfiguration().orientation;
 
 		setContentView(R.layout.main);
+		mActivity = MainActivity.this;
+		
+		String prior_error = _preferences.getString("prior_error", null);
+		if (prior_error != null) {
+			displayLogOutput(prior_error);
+			_preferences.edit().remove("prior_error").commit();
+		} else {
+			mUEHandler = new Thread.UncaughtExceptionHandler() {
+				public void uncaughtException(Thread t, Throwable error) {
+					if (error != null) {
+						error.printStackTrace();
+						StringBuilder output = new StringBuilder();
+						output.append("UncaughtException:\n");
+						for (StackTraceElement trace : error.getStackTrace()) {
+							output.append(trace.toString() + "\n");
+						}
+						String log = output.toString();
+						_preferences.edit().putString("prior_error", log).commit();
+						android.os.Process.killProcess(android.os.Process.myPid());
+						System.exit(0);
+					}
+				}
+			};
+			Thread.setDefaultUncaughtExceptionHandler(mUEHandler);
+		}
+		
+		NativeInterop.setFilesDirPath(Environment.getExternalStorageDirectory().getAbsolutePath());
+		
+		EmulatorActivity.RegisterPreferences();
+		
+		if(!NativeInterop.isVirtualMachineCreated())
+		{
+			NativeInterop.createVirtualMachine();
+		}
+		
+		Intent intent = getIntent();
+		if (intent.getAction() != null) {
+			if (intent.getAction().equals(Intent.ACTION_VIEW)) {
+				launchDisk(new File(intent.getData().getPath()), true);
+				getIntent().setData(null);
+				setIntent(null);
+			}
+		}
 
 		Toolbar toolbar = getSupportToolbar();
 		setSupportActionBar(toolbar);
@@ -93,51 +137,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		findViewById(R.id.navigation_drawer).setBackgroundColor(Color.parseColor(
 				("#" + Integer.toHexString(attributeResourceId)).replace("#ff", "#8e")
 		));
-
-		mActivity = MainActivity.this;
-		_preferences = getSharedPreferences("prefs", MODE_PRIVATE);
-		
-		String prior_error = _preferences.getString("prior_error", null);
-		if (prior_error != null) {
-			displayLogOutput(prior_error);
-			_preferences.edit().remove("prior_error").commit();
-		} else {
-			mUEHandler = new Thread.UncaughtExceptionHandler() {
-				public void uncaughtException(Thread t, Throwable error) {
-					if (error != null) {
-						StringBuilder output = new StringBuilder();
-						output.append("UncaughtException:\n");
-						for (StackTraceElement trace : error.getStackTrace()) {
-							output.append(trace.toString() + "\n");
-						}
-						String log = output.toString();
-						_preferences.edit().putString("prior_error", log).commit();
-						error.printStackTrace();
-						android.os.Process.killProcess(android.os.Process.myPid());
-						System.exit(0);
-					}
-				}
-			};
-			Thread.setDefaultUncaughtExceptionHandler(mUEHandler);
-		}
-		
-		NativeInterop.setFilesDirPath(Environment.getExternalStorageDirectory().getAbsolutePath());
-
-		EmulatorActivity.RegisterPreferences();
-
-		if(!NativeInterop.isVirtualMachineCreated())
-		{
-			NativeInterop.createVirtualMachine();
-		}
-		
-		Intent intent = getIntent();
-		if (intent.getAction() != null) {
-			if (intent.getAction().equals(Intent.ACTION_VIEW)) {
-				launchDisk(new File(intent.getData().getPath()), true);
-				getIntent().setData(null);
-				setIntent(null);
-			}
-		}
 
 		gameInfo = new GameInfo(MainActivity.this);
 		getContentResolver().call(Games.GAMES_URI, "importDb", null, null);

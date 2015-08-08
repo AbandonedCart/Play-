@@ -27,7 +27,7 @@ import android.os.Build;
 import android.os.StrictMode;
 
 /**
- * Upload the specialized logcat to reicast issues
+ * Upload the specialized logcat to Play! issues
  * 
  * @param mContext
  *            The context this method will be executed from
