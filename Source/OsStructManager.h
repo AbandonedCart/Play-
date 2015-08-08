@@ -14,6 +14,9 @@ public:
 		assert(m_idBase != 0);
 	}
 
+	COsStructManager(const COsStructManager&) = delete;
+	COsStructManager& operator =(const COsStructManager) = delete;
+
 	StructType* GetBase() const
 	{
 		return m_structBase;
