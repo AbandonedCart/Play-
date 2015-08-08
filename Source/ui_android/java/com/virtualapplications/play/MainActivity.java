@@ -154,7 +154,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		int statusBarHeight = getStatusBarHeight();
 
 		View toolbar = findViewById(R.id.my_awesome_toolbar);
-		final FrameLayout content = (FrameLayout) findViewById(R.id.content_frame);
+		final LinearLayout content = (LinearLayout) findViewById(R.id.content_frame);
 		
 		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
 		dlp.topMargin = statusBarHeight;
@@ -448,22 +448,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 		return result;
 	}
-	
-//	private Toolbar getSupportToolbar() {
-//		int statusBarHeight = getStatusBarHeight();
-//		
-//		Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
-//		ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
-//		mlp.bottomMargin = - statusBarHeight;
-//		toolbar.setLayoutParams(mlp);
-//
-//		FrameLayout content = (FrameLayout) findViewById(R.id.content_frame);
-//		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
-//		dlp.topMargin = statusBarHeight;
-//		content.setLayoutParams(dlp);
-//
-//		return toolbar;
-//	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
