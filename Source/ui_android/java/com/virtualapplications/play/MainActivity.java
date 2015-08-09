@@ -130,6 +130,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 					("#" + Integer.toHexString(attributeResourceId)).replace("#ff", "#8e")
 			));
 //		}
+
 		gameInfo = new GameInfo(MainActivity.this);
 		getContentResolver().call(Games.GAMES_URI, "importDb", null, null);
 
@@ -420,8 +421,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	public static void clearCache() {
 		((MainActivity) mActivity).clearCoverCache();
 	}
-	
-	static boolean IsLoadableExecutableFileName(String fileName)
+
+	private static boolean IsLoadableExecutableFileName(String fileName)
 	{
 		return fileName.toLowerCase().endsWith(".elf");
 	}
@@ -719,7 +720,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	}
 
 	public static void launchGame(File game) {
-		((MainActivity)mActivity).launchDisk(game);
+		((MainActivity) mActivity).launchDisk(game);
 	}
 	
 	private void launchDisk (File game) {
@@ -735,11 +736,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				game.setLastModified(System.currentTimeMillis());
 				NativeInterop.bootDiskImage(game.getPath());
 			}
-			setCurrentDirectory(game.getPath().substring(0, game.getPath().lastIndexOf(File.separator)));
 		}
 		catch(Exception ex)
 		{
-			displaySimpleMessage("Error", ex.getMessage());
+			Toast.makeText(getApplicationContext(), "Error: " + ex.getMessage(),
+						   Toast.LENGTH_SHORT).show();
+			ex.printStackTrace();
 			return;
 		}
 		//TODO: Catch errors that might happen while loading files
