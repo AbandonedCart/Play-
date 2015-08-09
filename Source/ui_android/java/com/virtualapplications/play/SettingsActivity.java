@@ -68,32 +68,32 @@ public class SettingsActivity extends PreferenceActivity
 		}
 		int theme;
 		switch (position) {
-			case 0:
-				if (TB != null){TB.setBackgroundResource(R.color.action_bar_Yellow);}
-				theme = R.style.Yellow;
-				mContext.setTheme(R.style.Yellow);
-				break;
+//			case 0:
+//				if (TB != null){TB.setBackgroundResource(R.color.action_bar_Yellow);}
+//				theme = R.style.Yellow;
+//				mContext.setTheme(R.style.Yellow);
+//				break;
 			default:
-			case 1:
+//			case 1:
 				if (TB != null){TB.setBackgroundResource(R.color.action_bar_Blue);}
 				theme = R.style.Blue;
 				mContext.setTheme(R.style.Blue);
 				break;
-			case 2:
-				if (TB != null){TB.setBackgroundResource(R.color.action_bar_Pink);}
-				theme = R.style.Pink;
-				mContext.setTheme(R.style.Pink);
-				break;
-			case 3:
-				if (TB != null){TB.setBackgroundResource(R.color.action_bar_purple);}
-				theme = R.style.Purple;
-				mContext.setTheme(R.style.Purple);
-				break;
-			case 4:
-				if (TB != null){TB.setBackgroundResource(R.color.action_bar_Teal);}
-				theme = R.style.Teal;
-				mContext.setTheme(R.style.Teal);
-				break;
+//			case 2:
+//				if (TB != null){TB.setBackgroundResource(R.color.action_bar_Pink);}
+//				theme = R.style.Pink;
+//				mContext.setTheme(R.style.Pink);
+//				break;
+//			case 3:
+//				if (TB != null){TB.setBackgroundResource(R.color.action_bar_purple);}
+//				theme = R.style.Purple;
+//				mContext.setTheme(R.style.Purple);
+//				break;
+//			case 4:
+//				if (TB != null){TB.setBackgroundResource(R.color.action_bar_Teal);}
+//				theme = R.style.Teal;
+//				mContext.setTheme(R.style.Teal);
+//				break;
 		}
 		mContext.getTheme().applyStyle(theme,true);
 	}
