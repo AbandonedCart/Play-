@@ -7,18 +7,10 @@ import android.content.pm.*;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.PaintDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.os.*;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.*;
 import android.view.*;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -72,6 +64,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		_preferences = getSharedPreferences("prefs", MODE_PRIVATE);
 		currentOrientation = getResources().getConfiguration().orientation;
 
+		SettingsActivity.ChangeTheme(null,this);
 		if (isAndroidTV(this)) {
 			setContentView(R.layout.tele);
 		} else {
@@ -168,22 +161,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		dlp.topMargin = statusBarHeight;
 		content.setLayoutParams(dlp);
 
-		int[] colors = new int[2];// you can increase array size to add more colors to gradient.
-		TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientStart});
-		int attributeResourceIdStart = a.getColor(0, 0);
-		a.recycle();
-//		float[] hsv = new float[3];
-//		Color.colorToHSV(attributeResourceIdStart, hsv);
-//		hsv[2] *= 1.0f;// make it darker
-//		colors[0] = Color.HSVToColor(hsv);
-		colors[0] = Color.parseColor("#" + Integer.toHexString(attributeResourceIdStart));
-		TypedArray b = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientEnd});
-		int attributeResourceIdEnd = b.getColor(0, 0);
-		b.recycle();
-//		colors[1] = Color.rgb(20,20,20);
-		colors[1] = Color.parseColor("#" + Integer.toHexString(attributeResourceIdEnd));
-		GradientDrawable gradientbg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
-		content.setBackground(gradientbg);
+		generateGradient(content);
 
 		ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
 		mlp.bottomMargin = - statusBarHeight;
@@ -227,6 +205,33 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			 game_listing.getPaddingBottom() + p.y);
 		}
 		return (Toolbar) toolbar;
+	}
+
+	private void generateGradient(LinearLayout content){
+		if (content != null) {
+			int[] colors = new int[2];// you can increase array size to add more colors to gradient.
+			TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientStart});
+			int attributeResourceIdStart = a.getColor(0, 0);
+			a.recycle();
+//			float[] hsv = new float[3];
+//			Color.colorToHSV(attributeResourceIdStart, hsv);
+//			hsv[2] *= 1.0f;// make it darker
+//			colors[0] = Color.HSVToColor(hsv);
+			colors[0] = Color.parseColor("#" + Integer.toHexString(attributeResourceIdStart));
+			TypedArray b = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientEnd});
+			int attributeResourceIdEnd = b.getColor(0, 0);
+			b.recycle();
+//			colors[1] = Color.rgb(20,20,20);
+			colors[1] = Color.parseColor("#" + Integer.toHexString(attributeResourceIdEnd));
+			GradientDrawable gradientbg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
+			content.setBackground(gradientbg);
+		}
+		TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorPrimaryDark});
+		int attributeResourceId = a.getColor(0, 0);
+		a.recycle();
+		findViewById(R.id.navigation_drawer).setBackgroundColor(Color.parseColor(
+				("#" + Integer.toHexString(attributeResourceId)).replace("#ff", "#8e")
+		));
 	}
 
 	public static Point getNavigationBarSize(Context context) {
@@ -302,8 +307,17 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	private void displaySettingsActivity()
 	{
 		Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-		startActivity(intent);
+		startActivityForResult(intent, 0);
+
 	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 0) {
+			SettingsActivity.ChangeTheme(null, this);
+			generateGradient((LinearLayout) findViewById(R.id.content_frame));
+		}
+	}
+
 
 	private void displayAboutDialog()
 	{

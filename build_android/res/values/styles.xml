@@ -17,12 +17,8 @@
 
     </style>
 
-    <style name="MyActionBar"
-        parent="Base.Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="android:background">@color/action_bar_Blue</item>
-    </style>
 
-    <style name="Blue" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Blue" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <!-- Customize your theme here. -->
