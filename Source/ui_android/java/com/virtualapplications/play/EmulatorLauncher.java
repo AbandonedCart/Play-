@@ -11,9 +11,9 @@ import android.view.ContextThemeWrapper;
 
 import java.io.File;
 
-public class ExternalEmulatorLauncher extends Activity {
+public class EmulatorLauncher extends Activity {
 
-    public ExternalEmulatorLauncher() {
+    public EmulatorLauncher() {
     }
 
     @Override

@@ -41,7 +41,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".ExternalEmulatorLauncher"
+			android:name=".EmulatorLauncher"
 			android:enabled="true"
 			android:exported="true"
 			android:label="PLAY - PS2 Game Launcher">
