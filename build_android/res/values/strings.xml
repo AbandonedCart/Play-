@@ -25,6 +25,8 @@
     <string name="file_list_homebrew">Homebrew</string>
     <string name="file_list_default">Unsorted</string>
     
+    <string name="launch_game">Play %1$s</string>
+    
     <!-- Applciation Preferences -->
     
     <string name="title_activity_settings">Settings</string>

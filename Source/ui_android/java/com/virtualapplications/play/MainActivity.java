@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.*;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.*;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -640,35 +639,44 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 					cover = gameInfo.getImage(gameStats[0], childview, gameStats[3]);
 					((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
 				}
-                childview.findViewById(R.id.childview).setOnLongClickListener(
-                    configureLongClick(childview, cover, gameStats[2]));
-			}
-			
-			childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
-				public void onClick(View view) {
-					launchDisk(game);
-					return;
-				}
-			});
+                childview.findViewById(R.id.childview).setOnClickListener(
+                    configureOnClick(childview, cover, gameStats[1], gameStats[2], game));
+            } else {
+                childview.findViewById(R.id.childview).setOnClickListener(
+                    configureOnClick(childview, null, game.getName(), null, game));
+            }
 			return childview;
 		}
 	}
     
-    public static OnLongClickListener getOnLongClickListener(View childview, Bitmap cover, String overview) {
-        return ((MainActivity) mActivity).configureLongClick(childview, cover, overview);
+    public static OnClickListener getClickListener(View childview, Bitmap cover, String title, String overview, File game) {
+        return ((MainActivity) mActivity).configureOnClick(childview, cover, title, overview, game);
     }
     
-    public OnLongClickListener configureLongClick(final View childview, final Bitmap cover, final String overview) {
-        return new OnLongClickListener() {
-            public boolean onLongClick(View view) {
+    public OnClickListener configureOnClick(final View childview, final Bitmap cover, final String title, final String overview, final File game) {
+        return new OnClickListener() {
+            public void onClick(View view) {
                 if (cover != null) {
                     BitmapDrawable backgroundDrawable = new BitmapDrawable(cover);
                     mDetailsLayout.setBackgroundDrawable(backgroundDrawable);
                 }
-                TextView detailView = (TextView) mDetailsLayout.findViewById(R.id.game_details);
-                detailView.setText(overview);
+                if (overview != null) {
+                    TextView detailView = (TextView) mDetailsLayout.findViewById(R.id.game_details);
+                    detailView.setText(overview);
+                }
+                Button launch = (Button) mDetailsLayout.findViewById(R.id.game_launch);
+                if (title != null) {
+                    launch.setText(getString(R.string.launch_game, title));
+                } else {
+                    launch.setText(getString(R.string.launch_game, game.getName()));
+                }
+                launch.setOnClickListener(new OnClickListener() {
+                    public void onClick(View view) {
+                        mUnfoldableView.foldBack();
+                        launchDisk(game);
+                    }
+                });
                 mUnfoldableView.unfold(childview.findViewById(R.id.game_icon), mDetailsLayout);
-                return true;
             }
         };
     }
@@ -702,6 +710,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         mDetailsLayout.setVisibility(View.INVISIBLE);
         
         mUnfoldableView = (UnfoldableView) findViewById(R.id.unfoldable_view);
+        mUnfoldableView.setGesturesEnabled(false);
         
         mUnfoldableView.setOnFoldingListener(new UnfoldableView.SimpleFoldingListener() {
             @Override

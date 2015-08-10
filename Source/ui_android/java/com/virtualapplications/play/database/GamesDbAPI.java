@@ -41,7 +41,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.view.View;
-import android.view.View.OnLongClickListener;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
@@ -158,8 +158,8 @@ public class GamesDbAPI extends AsyncTask<File, Integer, Document> {
 										if (boxart != null) {
 											cover = gameInfo.getImage(remoteID, childview, boxart);
 										}
-                                        childview.findViewById(R.id.childview).setOnLongClickListener(
-                                            MainActivity.getOnLongClickListener(childview, cover, overview));
+                                        childview.findViewById(R.id.childview).setOnClickListener(
+                                            MainActivity.getClickListener(childview, cover, title, overview, gameFile));
 									}
 									break;
 								}
@@ -206,7 +206,7 @@ public class GamesDbAPI extends AsyncTask<File, Integer, Document> {
 								if (db_serial == null || db_serial == serial) {
 									values.put(Games.KEY_SERIAL, serial);
 								} else if (values.get(Games.KEY_SERIAL) != null) {
-									values.remove(Games.KEY_SERIAL);
+									values.put(Games.KEY_SERIAL, db_serial);
 								}
 								mContext.getContentResolver().update(Games.GAMES_URI, values, selection, selectionArgs);
 							} while (c.moveToNext());
@@ -223,8 +223,8 @@ public class GamesDbAPI extends AsyncTask<File, Integer, Document> {
 						if (coverImage != null) {
 							cover = gameInfo.getImage(remoteID, childview, coverImage);
 						}
-                        childview.findViewById(R.id.childview).setOnLongClickListener(
-                            MainActivity.getOnLongClickListener(childview, cover, overview));
+                        childview.findViewById(R.id.childview).setOnClickListener(
+                            MainActivity.getClickListener(childview, cover, title, overview, gameFile));
 					}
 				}
 			} catch (Exception e) {

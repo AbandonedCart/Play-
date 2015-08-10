@@ -50,18 +50,35 @@
                 android:id="@+id/details_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#C0000000">
+                android:background="#C0000000" >
                 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#C0000000">
-                
-                    <TextView
-                        android:id="@+id/game_details"
+                    android:background="#C0000000"
+                    android:orientation="vertical" >
+                    
+                    <Button
+                        android:id="@+id/game_launch"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp" />
+                        android:clickable="true"
+                        android:focusable="true" />
+                    
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"
+                        android:layout_below="@+id/game_launch"
+                        android:scrollbars="none" >
+                        
+                        <TextView
+                            android:id="@+id/game_details"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                        
+                    </ScrollView>
+                    
                 </LinearLayout>
                 
             </FrameLayout>
