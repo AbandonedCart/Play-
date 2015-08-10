@@ -163,11 +163,13 @@
 		70AD23961B39199300137AA0 /* PsuSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70AD23911B39199300137AA0 /* PsuSaveImporter.cpp */; };
 		70AD23971B39199300137AA0 /* XpsSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70AD23931B39199300137AA0 /* XpsSaveImporter.cpp */; };
 		87C4CC051B7372F500CE6D3C /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C4CC021B7372F500CE6D3C /* iCadeReaderView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		87C4CC2A1B75009100CE6D3C /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C4CC291B75009100CE6D3C /* GameController.framework */; };
-		87C86C0B1B65F3330006233E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0A1B65F3330006233E /* QuartzCore.framework */; };
-		87C86C0D1B65F33A0006233E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0C1B65F33A0006233E /* OpenGLES.framework */; };
-		87C86C0F1B65F3480006233E /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0E1B65F3470006233E /* libbz2.dylib */; };
-		87C86C111B65F34F0006233E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C101B65F34F0006233E /* UIKit.framework */; };
+		87D92EF81B78548B00D8FD9E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87D92EF71B78548B00D8FD9E /* CoreGraphics.framework */; };
+		87D92EFB1B78553E00D8FD9E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0C1B65F33A0006233E /* OpenGLES.framework */; };
+		87D92EFE1B78554C00D8FD9E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C0A1B65F3330006233E /* QuartzCore.framework */; };
+		87D92EFF1B78555600D8FD9E /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C4CC291B75009100CE6D3C /* GameController.framework */; };
+		87D92F001B78555E00D8FD9E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C86C101B65F34F0006233E /* UIKit.framework */; };
+		87D92F011B78556300D8FD9E /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C4CC161B7482E600CE6D3C /* libCodeGen.a */; };
+		87D92F021B78556700D8FD9E /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C4CC101B7482DE00CE6D3C /* libFramework.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -502,6 +504,7 @@
 		87C86C0C1B65F33A0006233E /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		87C86C0E1B65F3470006233E /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
 		87C86C101B65F34F0006233E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		87D92EF71B78548B00D8FD9E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -509,11 +512,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				87C4CC2A1B75009100CE6D3C /* GameController.framework in Frameworks */,
-				87C86C111B65F34F0006233E /* UIKit.framework in Frameworks */,
-				87C86C0F1B65F3480006233E /* libbz2.dylib in Frameworks */,
-				87C86C0D1B65F33A0006233E /* OpenGLES.framework in Frameworks */,
-				87C86C0B1B65F3330006233E /* QuartzCore.framework in Frameworks */,
+				87D92F021B78556700D8FD9E /* libFramework.a in Frameworks */,
+				87D92F011B78556300D8FD9E /* libCodeGen.a in Frameworks */,
+				87D92F001B78555E00D8FD9E /* UIKit.framework in Frameworks */,
+				87D92EFF1B78555600D8FD9E /* GameController.framework in Frameworks */,
+				87D92EFE1B78554C00D8FD9E /* QuartzCore.framework in Frameworks */,
+				87D92EFB1B78553E00D8FD9E /* OpenGLES.framework in Frameworks */,
+				87D92EF81B78548B00D8FD9E /* CoreGraphics.framework in Frameworks */,
 				70834CE11B1BD7EE00E8D5C6 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -676,6 +681,7 @@
 		70834B811B1BD2CF00E8D5C6 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				87D92EF71B78548B00D8FD9E /* CoreGraphics.framework */,
 				87C86C101B65F34F0006233E /* UIKit.framework */,
 				87C86C0E1B65F3470006233E /* libbz2.dylib */,
 				87C4CC291B75009100CE6D3C /* GameController.framework */,
