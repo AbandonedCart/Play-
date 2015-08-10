@@ -185,34 +185,6 @@ public class GameInfo {
 		}
 	}
 	
-	public OnLongClickListener configureLongClick(final String title, final String overview, final File gameFile) {
-		return new OnLongClickListener() {
-			public boolean onLongClick(View view) {
-				final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-				builder.setCancelable(true);
-				builder.setTitle(title);
-				builder.setMessage(overview);
-				builder.setNegativeButton("Close",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						return;
-					}
-				});
-				builder.setPositiveButton("Launch",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						MainActivity.launchGame(gameFile);
-						return;
-					}
-				});
-				builder.create().show();
-				return true;
-			}
-		};
-	}
-	
 	public String[] getGameInfo(File game, View childview) {
 		String serial = getSerial(game);
 		if (serial == null) {

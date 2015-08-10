@@ -6,7 +6,9 @@ import android.content.*;
 import android.content.pm.*;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.*;
 import android.support.v7.app.ActionBarActivity;
@@ -14,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.*;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.*;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -30,6 +33,8 @@ import org.apache.commons.io.comparator.SizeFileComparator;
 import org.apache.commons.lang3.StringUtils;
 import com.android.util.FileUtils;
 import android.graphics.Point;
+
+import com.alexvasilkov.foldablelayout.UnfoldableView;
 
 import com.virtualapplications.play.database.GameInfo;
 import com.virtualapplications.play.database.SqliteHelper.Games;
@@ -53,6 +58,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	public static final int SORT_HOMEBREW = 1;
 	public static final int SORT_NONE = 2;
 	private int sortMethod = SORT_NONE;
+
+    private UnfoldableView mUnfoldableView;
+    private View mListTouchInterceptor;
+    private FrameLayout mDetailsLayout;
 
 	//To prevent multiple padding buildups on multiple rotations.
 	private int relative_layout_original_right_padding;
@@ -149,7 +158,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		int statusBarHeight = getStatusBarHeight();
 
 		View toolbar = findViewById(R.id.my_awesome_toolbar);
-		final LinearLayout content = (LinearLayout) findViewById(R.id.content_frame);
+		final FrameLayout content = (FrameLayout) findViewById(R.id.content_frame);
 		
 		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
 		dlp.topMargin = statusBarHeight;
@@ -206,7 +215,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		return (Toolbar) toolbar;
 	}
 
-	private void generateGradient(LinearLayout content){
+	private void generateGradient(FrameLayout content) {
 		if (content != null) {
 			int[] colors = new int[2];// you can increase array size to add more colors to gradient.
 			TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientStart});
@@ -313,7 +322,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0) {
 			SettingsActivity.ChangeTheme(null, this);
-			generateGradient((LinearLayout) findViewById(R.id.content_frame));
+			generateGradient((FrameLayout) findViewById(R.id.content_frame));
 		}
 	}
 
@@ -497,7 +506,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 	@Override
 	public void onBackPressed() {
-		if (NavigationDrawerFragment.mDrawerLayout != null && mNavigationDrawerFragment.isDrawerOpen()) {
+        if (mUnfoldableView != null && (mUnfoldableView.isUnfolded() || mUnfoldableView.isUnfolding())) {
+            mUnfoldableView.foldBack();
+        } else if (NavigationDrawerFragment.mDrawerLayout != null && mNavigationDrawerFragment.isDrawerOpen()) {
 			NavigationDrawerFragment.mDrawerLayout.closeDrawer(NavigationDrawerFragment.mFragmentContainerView);
 		} else {
 			finish();
@@ -624,13 +635,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			final String[] gameStats = gameInfo.getGameInfo(game, childview);
 			
 			if (gameStats != null) {
-				childview.findViewById(R.id.childview).setOnLongClickListener(
-					gameInfo.configureLongClick(gameStats[1], gameStats[2], game));
-				
+                Bitmap cover = null;
 				if (!gameStats[3].equals("404")) {
-					gameInfo.getImage(gameStats[0], childview, gameStats[3]);
+					cover = gameInfo.getImage(gameStats[0], childview, gameStats[3]);
 					((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
 				}
+                childview.findViewById(R.id.childview).setOnLongClickListener(
+                    configureLongClick(childview, cover, gameStats[2]));
 			}
 			
 			childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
@@ -642,6 +653,25 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			return childview;
 		}
 	}
+    
+    public static OnLongClickListener getOnLongClickListener(View childview, Bitmap cover, String overview) {
+        return ((MainActivity) mActivity).configureLongClick(childview, cover, overview);
+    }
+    
+    public OnLongClickListener configureLongClick(final View childview, final Bitmap cover, final String overview) {
+        return new OnLongClickListener() {
+            public boolean onLongClick(View view) {
+                if (cover != null) {
+                    BitmapDrawable backgroundDrawable = new BitmapDrawable(cover);
+                    mDetailsLayout.setBackgroundDrawable(backgroundDrawable);
+                }
+                TextView detailView = (TextView) mDetailsLayout.findViewById(R.id.game_details);
+                detailView.setText(overview);
+                mUnfoldableView.unfold(childview.findViewById(R.id.game_icon), mDetailsLayout);
+                return true;
+            }
+        };
+    }
 	
 	private void populateImages(List<File> images) {
 		if (sortMethod == SORT_RECENT) {
@@ -657,18 +687,45 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			gameGrid.setAdapter(null);
 		}
 
-		int padding = getNavigationBarSize(this).y;
-		GamesAdapter adapter = new GamesAdapter(MainActivity.this, isConfigured ? R.layout.game_list_item : R.layout.file_list_item, images, padding);
-		/*
-		gameGrid.setNumColumns(-1);
-		-1 = autofit
-		or set a number if you like
-		 */
+		GamesAdapter adapter = new GamesAdapter(MainActivity.this, isConfigured ? R.layout.game_list_item : R.layout.file_list_item, images);
+
 		if (isConfigured){
 			gameGrid.setColumnWidth((int) getResources().getDimension(R.dimen.cover_width));
 		}
 		gameGrid.setAdapter(adapter);
 		gameGrid.invalidate();
+        
+        mListTouchInterceptor = (View) findViewById(R.id.touch_interceptor_view);
+        mListTouchInterceptor.setClickable(false);
+        
+        mDetailsLayout = (FrameLayout) findViewById(R.id.details_layout);
+        mDetailsLayout.setVisibility(View.INVISIBLE);
+        
+        mUnfoldableView = (UnfoldableView) findViewById(R.id.unfoldable_view);
+        
+        mUnfoldableView.setOnFoldingListener(new UnfoldableView.SimpleFoldingListener() {
+            @Override
+            public void onUnfolding(UnfoldableView unfoldableView) {
+                mListTouchInterceptor.setClickable(true);
+                mDetailsLayout.setVisibility(View.VISIBLE);
+            }
+            
+            @Override
+            public void onUnfolded(UnfoldableView unfoldableView) {
+                mListTouchInterceptor.setClickable(false);
+            }
+            
+            @Override
+            public void onFoldingBack(UnfoldableView unfoldableView) {
+                mListTouchInterceptor.setClickable(true);
+            }
+            
+            @Override
+            public void onFoldedBack(UnfoldableView unfoldableView) {
+                mListTouchInterceptor.setClickable(false);
+                mDetailsLayout.setVisibility(View.INVISIBLE);
+            }
+        });
 
 	}
 	
@@ -678,11 +735,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		private final int padding;
 		private List<File> games;
 		
-		public GamesAdapter(Context context, int ResourceId, List<File> images, int padding) {
+		public GamesAdapter(Context context, int ResourceId, List<File> images) {
 			super(context, ResourceId, images);
 			this.games = images;
 			this.layoutid = ResourceId;
-			this.padding = padding;
+			this.padding = getNavigationBarSize(context).y;
 		}
 
 		public int getCount() {
@@ -708,12 +765,14 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			if (game != null) {
 				createListItem(game, v);
 			}
-			if (position == games.size() - 1){
+			if (position == games.size() - 1) {
 				v.setPadding(
-						v.getPaddingLeft(),
-						v.getPaddingTop(),
-						v.getPaddingRight(),
-						v.getPaddingBottom() + padding);
+                    v.getPaddingLeft(),
+                    v.getPaddingTop(),
+                    v.getPaddingRight(),
+                    v.getPaddingBottom() + padding);
+                // Hack to fix the GridView height without addressing the actual issue
+                // http://stackoverflow.com/questions/8481844/gridview-height-gets-cut
 			}
 			return v;
 		}
