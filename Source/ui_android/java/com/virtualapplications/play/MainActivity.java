@@ -546,7 +546,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				filter[i] = new FilenameFilter() {
 
 					public boolean accept(File dir, String name) {
-						if (dir.getName().startsWith(".") || name.startsWith(".")) {
+                        if (dir.getName().equals("obb") || dir.getName().equals("cache")
+                            || dir.getName().startsWith(".") || name.startsWith(".")) {
 							return false;
 						} else if (StringUtils.endsWithIgnoreCase(name, "." + type)) {
 							File disk = new File(dir, name);
@@ -698,8 +699,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		GamesAdapter adapter = new GamesAdapter(MainActivity.this, isConfigured ? R.layout.game_list_item : R.layout.file_list_item, images);
 
 		if (isConfigured){
+            gameGrid.setNumColumns(GridView.AUTO_FIT);
 			gameGrid.setColumnWidth((int) getResources().getDimension(R.dimen.cover_width));
-		}
+        } else {
+            gameGrid.setNumColumns(1);
+        }
 		gameGrid.setAdapter(adapter);
 		gameGrid.invalidate();
         
