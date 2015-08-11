@@ -701,6 +701,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		if (isConfigured){
             gameGrid.setNumColumns(GridView.AUTO_FIT);
 			gameGrid.setColumnWidth((int) getResources().getDimension(R.dimen.cover_width));
+        } else if (isAndroidTV(this)) {
+            gameGrid.setNumColumns(2);
         } else {
             gameGrid.setNumColumns(1);
         }
