@@ -643,6 +643,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 childview.findViewById(R.id.childview).setOnClickListener(
                     configureOnClick(childview, cover, gameStats[1], gameStats[2], game));
             } else {
+                ImageView preview = (ImageView) childview.findViewById(R.id.game_icon);
+                preview.setImageResource(R.drawable.boxart);
+                preview.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                ((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.VISIBLE);
+
                 childview.findViewById(R.id.childview).setOnClickListener(
                     configureOnClick(childview, null, game.getName(), null, game));
             }
