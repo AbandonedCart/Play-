@@ -6,7 +6,6 @@
 	android:layout_height="wrap_content"
 	android:clickable="true"
 	android:focusable="true"
-	android:background="@drawable/game_selector"
 	android:gravity="center"
 	android:layout_weight="1" >
 

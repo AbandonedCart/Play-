@@ -699,12 +699,17 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		GamesAdapter adapter = new GamesAdapter(MainActivity.this, isConfigured ? R.layout.game_list_item : R.layout.file_list_item, images);
 
 		if (isConfigured){
+            gameGrid.setDrawSelectorOnTop(false);
             gameGrid.setNumColumns(GridView.AUTO_FIT);
 			gameGrid.setColumnWidth((int) getResources().getDimension(R.dimen.cover_width));
-        } else if (isAndroidTV(this)) {
-            gameGrid.setNumColumns(2);
         } else {
-            gameGrid.setNumColumns(1);
+            gameGrid.setDrawSelectorOnTop(true);
+            gameGrid.setSelector(getResources().getDrawable(R.drawable.game_selector));
+            if (isAndroidTV(this)) {
+                gameGrid.setNumColumns(2);
+            } else {
+                gameGrid.setNumColumns(1);
+            }
         }
 		gameGrid.setAdapter(adapter);
 		gameGrid.invalidate();
