@@ -6,6 +6,8 @@
 
 @property (nonatomic) iCadeReaderView* iCadeReader;
 @property (nonatomic) GCController *gController __attribute__((weak_import));
+@property (nonatomic, strong) id connectObserver;
+@property (nonatomic, strong) id disconnectObserver;
 
 @property NSString* imagePath;
 
