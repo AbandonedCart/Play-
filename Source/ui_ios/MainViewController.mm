@@ -2,6 +2,7 @@
 #import "EmulatorViewController.h"
 #import "IosUtils.h"
 #import "DiskUtils.h"
+#import "CoverViewCell.h"
 
 @interface MainViewController ()
 
@@ -65,20 +66,21 @@
 	return @"";
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 160;
+    // Assign the specific cell height to prevent issues with custom size
+}
+
 -(UITableViewCell*)tableView: (UITableView*)tableView cellForRowAtIndexPath: (NSIndexPath*)indexPath 
 {
-	static NSString *CellIdentifier = @"Cell";
-
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: CellIdentifier];
-	if(cell == nil)
-	{
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier: CellIdentifier];
-	}
+    static NSString *CellIdentifier = @"coverCell";
+    
+    CoverViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
 	
 	assert(indexPath.row < [self.images count]);
 	NSString* imagePath = [[self.images objectAtIndex: indexPath.row] objectForKey:@"file"];
 	
-	cell.textLabel.text = [imagePath lastPathComponent];
+	cell.nameLabel.text = [imagePath lastPathComponent];
 	
 	return cell;
 }
