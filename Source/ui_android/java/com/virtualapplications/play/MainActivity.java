@@ -754,6 +754,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		private final int layoutid;
 		private final int padding;
 		private List<File> games;
+        private int original_bottom_pad;
 		
 		public GamesAdapter(Context context, int ResourceId, List<File> images) {
 			super(context, ResourceId, images);
@@ -785,15 +786,24 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			if (game != null) {
 				createListItem(game, v);
 			}
+			if (original_bottom_pad == 0){
+				original_bottom_pad = v.getPaddingBottom();
+			}
 			if (position == games.size() - 1) {
 				v.setPadding(
                     v.getPaddingLeft(),
                     v.getPaddingTop(),
                     v.getPaddingRight(),
-                    v.getPaddingBottom() + padding);
-                // Hack to fix the GridView height without addressing the actual issue
-                // http://stackoverflow.com/questions/8481844/gridview-height-gets-cut
-			}
+                    original_bottom_pad + padding);
+            } else {
+                v.setPadding(
+                    v.getPaddingLeft(),
+                    v.getPaddingTop(),
+                    v.getPaddingRight(),
+                    original_bottom_pad);
+            }
+            // Hack to fix the GridView height without extending into custom class
+            // http://stackoverflow.com/questions/8481844/gridview-height-gets-cut
 			return v;
 		}
 	}

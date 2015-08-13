@@ -97,7 +97,7 @@ public class GameInfo {
 			if (childview != null) {
 				ImageView preview = (ImageView) childview.findViewById(R.id.game_icon);
 				preview.setImageBitmap(cachedImage);
-				preview.setScaleType(ScaleType.CENTER_INSIDE);
+				preview.setScaleType(ScaleType.FIT_XY);
 				((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
 			}
 			return cachedImage;
@@ -114,7 +114,7 @@ public class GameInfo {
 			if (childview != null) {
 				ImageView preview = (ImageView) childview.findViewById(R.id.game_icon);
 				preview.setImageBitmap(bitmap);
-				preview.setScaleType(ScaleType.CENTER_INSIDE);
+				preview.setScaleType(ScaleType.FIT_XY);
 				((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
 			}
 			return bitmap;
