@@ -29,7 +29,7 @@
 			android:id="@+id/game_text"
 			android:layout_width="@dimen/cover_label_width"
 			android:layout_height="wrap_content"
-			android:layout_margin="5dp"
+			android:layout_margin="4dp"
 			android:layout_alignParentBottom="true" />
 	</RelativeLayout>
 

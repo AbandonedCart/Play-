@@ -6,7 +6,7 @@
     <dimen name="tool_bar_top_padding_inv">-26dp</dimen>
     <dimen name="tool_bar_top_padding_inv_inv">26dp</dimen>
 
-    <dimen name="cover_width">180dp</dimen>
-    <dimen name="cover_height">255dp</dimen>
-    <dimen name="cover_label_width">170dp</dimen>
+    <dimen name="cover_width">168dp</dimen>
+    <dimen name="cover_height">238dp</dimen>
+    <dimen name="cover_label_width">160dp</dimen>
 </resources>
