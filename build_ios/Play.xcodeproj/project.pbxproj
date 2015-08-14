@@ -494,14 +494,10 @@
 		70834C9E1B1BD78D00E8D5C6 /* VolumeDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeDescriptor.h; path = ../Source/ISO9660/VolumeDescriptor.h; sourceTree = "<group>"; };
 		70834CE01B1BD7EE00E8D5C6 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		70834CE21B1BD93100E8D5C6 /* Purei_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Purei_Prefix.pch; path = ../Source/ui_ios/Purei_Prefix.pch; sourceTree = "<group>"; };
-		70834CE51B1BE1AE00E8D5C6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		70834CE71B1BE1C500E8D5C6 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
 		70AD23591B38A00500137AA0 /* EeExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EeExecutor.cpp; path = ../Source/ee/EeExecutor.cpp; sourceTree = "<group>"; };
 		70AD235A1B38A00500137AA0 /* EeExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EeExecutor.h; path = ../Source/ee/EeExecutor.h; sourceTree = "<group>"; };
 		70AD23651B38A2FE00137AA0 /* GlEsView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GlEsView.mm; path = ../Source/ui_ios/GlEsView.mm; sourceTree = "<group>"; };
 		70AD23681B38A39000137AA0 /* GlEsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlEsView.h; path = ../Source/ui_ios/GlEsView.h; sourceTree = "<group>"; };
-		70AD23721B38F98E00137AA0 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
-		70AD23741B38F9B200137AA0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		70AD23771B38FFBA00137AA0 /* Icon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Icon.cpp; path = ../Source/saves/Icon.cpp; sourceTree = "<group>"; };
 		70AD23781B38FFBA00137AA0 /* Icon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Icon.h; path = ../Source/saves/Icon.h; sourceTree = "<group>"; };
 		70AD237D1B38FFBA00137AA0 /* Save.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Save.cpp; path = ../Source/saves/Save.cpp; sourceTree = "<group>"; };
@@ -558,11 +554,6 @@
 		70834AA51B1BC70300E8D5C6 = {
 			isa = PBXGroup;
 			children = (
-				87C208BD1B7A3E7E00638BDD /* GameController.framework */,
-				87C208BB1B7A3E7A00638BDD /* UIKit.framework */,
-				87C208B91B7A3E7500638BDD /* libbz2.dylib */,
-				87C208B71B7A3E6900638BDD /* OpenGLES.framework */,
-				87C208B51B7A3E6000638BDD /* QuartzCore.framework */,
 				70834B941B1BD3A300E8D5C6 /* Config */,
 				70834B811B1BD2CF00E8D5C6 /* Dependencies */,
 				70834AB01B1BC70300E8D5C6 /* Source Files */,
@@ -723,11 +714,12 @@
 				70834B881B1BD2F500E8D5C6 /* CodeGen.xcodeproj */,
 				705342D81B78122400477EC4 /* CoreGraphics.framework */,
 				70834B821B1BD2E100E8D5C6 /* Framework.xcodeproj */,
-				70834CE71B1BE1C500E8D5C6 /* libbz2.dylib */,
 				70834CE01B1BD7EE00E8D5C6 /* libz.dylib */,
-				70AD23721B38F98E00137AA0 /* OpenGLES.framework */,
-				70AD23741B38F9B200137AA0 /* QuartzCore.framework */,
-				70834CE51B1BE1AE00E8D5C6 /* UIKit.framework */,
+				87C208B91B7A3E7500638BDD /* libbz2.dylib */,
+				87C208B51B7A3E6000638BDD /* QuartzCore.framework */,
+				87C208BB1B7A3E7A00638BDD /* UIKit.framework */,
+				87C208BD1B7A3E7E00638BDD /* GameController.framework */,
+				87C208B71B7A3E6900638BDD /* OpenGLES.framework */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
