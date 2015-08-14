@@ -170,6 +170,7 @@
 		874ECDE51B7E7250000075B6 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 874ECDE41B7E7250000075B6 /* SDWebImage.framework */; };
 		874ECDE71B7E749A000075B6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 874ECDE61B7E749A000075B6 /* ImageIO.framework */; };
 		874ECDE81B7E74C2000075B6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 705342D81B78122400477EC4 /* CoreGraphics.framework */; };
+		874ECDF21B7E7DA4000075B6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 874ECDF11B7E7DA4000075B6 /* Images.xcassets */; };
 		87C208B61B7A3E6000638BDD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B51B7A3E6000638BDD /* QuartzCore.framework */; };
 		87C208B81B7A3E6900638BDD /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B71B7A3E6900638BDD /* OpenGLES.framework */; };
 		87C208BA1B7A3E7500638BDD /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B91B7A3E7500638BDD /* libbz2.dylib */; };
@@ -526,6 +527,7 @@
 		874ECDA91B7DB862000075B6 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libsqlite3.dylib; sourceTree = DEVELOPER_DIR; };
 		874ECDE41B7E7250000075B6 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = "Play!/SDWebImage.framework"; sourceTree = "<group>"; };
 		874ECDE61B7E749A000075B6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
+		874ECDF11B7E7DA4000075B6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Play!/Images.xcassets"; sourceTree = "<group>"; };
 		87C208B51B7A3E6000638BDD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		87C208B71B7A3E6900638BDD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		87C208B91B7A3E7500638BDD /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
@@ -587,6 +589,7 @@
 			isa = PBXGroup;
 			children = (
 				874ECDA01B7D980C000075B6 /* Resources */,
+				874ECDF11B7E7DA4000075B6 /* Images.xcassets */,
 				87C4CC2F1B75010700CE6D3C /* iCade-iOS */,
 				70834AFC1B1BCD1200E8D5C6 /* Play Core */,
 				70834AFB1B1BCCFF00E8D5C6 /* ui_ios */,
@@ -1106,6 +1109,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				70834B9A1B1BD3AC00E8D5C6 /* GeneralSettings.xcconfig in Resources */,
+				874ECDF21B7E7DA4000075B6 /* Images.xcassets in Resources */,
 				70834B9B1B1BD3AC00E8D5C6 /* GeneralSettingsDebug.xcconfig in Resources */,
 				70834AF41B1BCB9E00E8D5C6 /* Main.storyboard in Resources */,
 				70834B991B1BD3AC00E8D5C6 /* ExternalDependencies.xcconfig in Resources */,
