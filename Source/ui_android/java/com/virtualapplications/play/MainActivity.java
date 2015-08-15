@@ -209,44 +209,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		mlp2.topMargin = statusBarHeight;
 		navigation_drawer.setLayoutParams(mlp2);
 
-		Point p = getNavigationBarSize(this);
-		/*
-		This will take account of nav bar to right/bottom
-		Not sure if there is a way to detect left/top? thus always pad right/bottom for now
-		*/
-		View relative_layout = findViewById(R.id.relative_layout);
-		if (p.x != 0){
-			if (relative_layout_original_right_padding == 0){
-				relative_layout_original_right_padding = relative_layout.getPaddingRight();
-			}
-			relative_layout.setPadding(
-				relative_layout.getPaddingLeft(),
-				relative_layout.getPaddingTop(),
-				relative_layout_original_right_padding + p.x,
-				relative_layout.getPaddingBottom());
-
-			navigation_drawer.setPadding(
-				navigation_drawer.getPaddingLeft(),
-				navigation_drawer.getPaddingTop(),
-				navigation_drawer.getPaddingRight(),
-				navigation_drawer_original_bottom_padding);
-		} else if (p.y != 0){
-			navigation_drawer.invalidate();
-			if (navigation_drawer_original_bottom_padding == 0){
-				navigation_drawer_original_bottom_padding = navigation_drawer.getPaddingRight();
-			}
-			navigation_drawer.setPadding(
-				navigation_drawer.getPaddingLeft(), 
-				navigation_drawer.getPaddingTop(), 
-				navigation_drawer.getPaddingRight(),
-				navigation_drawer_original_bottom_padding + p.y);
-
-			relative_layout.setPadding(
-				relative_layout.getPaddingLeft(),
-				relative_layout.getPaddingTop(),
-				relative_layout_original_right_padding,
-				relative_layout.getPaddingBottom());
-		}
 		return (Toolbar) toolbar;
 	}
 
@@ -277,41 +239,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		));
 	}
 
-	public static Point getNavigationBarSize(Context context) {
-		Point appUsableSize = getAppUsableScreenSize(context);
-		Point realScreenSize = getRealScreenSize(context);
-		return new Point(realScreenSize.x - appUsableSize.x, realScreenSize.y - appUsableSize.y);
-	}
-
-	public static Point getAppUsableScreenSize(Context context) {
-		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-		Display display = windowManager.getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		return size;
-	}
-
-	public static Point getRealScreenSize(Context context) {
-		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-		Display display = windowManager.getDefaultDisplay();
-		Point size = new Point();
-
-		if (Build.VERSION.SDK_INT >= 17) {
-            display.getRealSize(size);
-		} else if (Build.VERSION.SDK_INT >= 14) {
-            try {
-                size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
-                size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
-            }
-            catch (IllegalAccessException e) {}
-            catch (InvocationTargetException e) {}
-            catch (NoSuchMethodException e) {}
-		}
-
-		return size;
-	}
-
-	private static long getBuildDate(Context context)
+	private static long getBuildDate(Context context) 
 	{
 		try
 		{
@@ -750,7 +678,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 
 		GamesAdapter adapter = new GamesAdapter(MainActivity.this, isConfigured ? R.layout.game_list_item : R.layout.file_list_item, images);
-
+		/*
+		gameGrid.setNumColumns(-1);
+		-1 = autofit
+		or set a number if you like
+		 */
 		if (isConfigured){
             gameGrid.setDrawSelectorOnTop(false);
             gameGrid.setNumColumns(GridView.AUTO_FIT);
@@ -805,7 +737,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	public class GamesAdapter extends ArrayAdapter<File> {
 
 		private final int layoutid;
-		private final int padding;
 		private List<File> games;
         private int original_bottom_pad;
 		
@@ -813,7 +744,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			super(context, ResourceId, images);
 			this.games = images;
 			this.layoutid = ResourceId;
-			this.padding = getNavigationBarSize(context).y;
 		}
 
 		public int getCount() {
@@ -839,24 +769,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			if (game != null) {
 				createListItem(game, v);
 			}
-			if (original_bottom_pad == 0){
-				original_bottom_pad = v.getPaddingBottom();
-			}
-			if (position == games.size() - 1) {
-				v.setPadding(
-                    v.getPaddingLeft(),
-                    v.getPaddingTop(),
-                    v.getPaddingRight(),
-                    original_bottom_pad + padding);
-            } else {
-                v.setPadding(
-                    v.getPaddingLeft(),
-                    v.getPaddingTop(),
-                    v.getPaddingRight(),
-                    original_bottom_pad);
-            }
-            // Hack to fix the GridView height without extending into custom class
-            // http://stackoverflow.com/questions/8481844/gridview-height-gets-cut
 			return v;
 		}
 	}
