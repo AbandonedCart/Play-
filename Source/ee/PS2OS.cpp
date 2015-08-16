@@ -2010,6 +2010,7 @@ void CPS2OS::sc_SuspendThread()
 	THREAD* thread = GetThread(id);
 	if(!thread->valid)
 	{
+		m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(-1);
 		return;
 	}
 
@@ -2029,6 +2030,8 @@ void CPS2OS::sc_SuspendThread()
 		break;
 	}
 
+	m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(id);
+
 	ThreadShakeAndBake();
 }
 
@@ -2040,6 +2043,7 @@ void CPS2OS::sc_ResumeThread()
 	THREAD* thread = GetThread(id);
 	if(!thread->valid)
 	{
+		m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(-1);
 		return;
 	}
 
@@ -2058,6 +2062,8 @@ void CPS2OS::sc_ResumeThread()
 		assert(0);
 		break;
 	}
+
+	m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(id);
 
 	ThreadShakeAndBake();
 }
