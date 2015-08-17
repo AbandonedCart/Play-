@@ -278,9 +278,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 		if (newConfig.orientation != currentOrientation) {
 			currentOrientation = newConfig.orientation;
-			if (!isAndroidTV(this)) {
-				generateGradient(findViewById(R.id.content_frame));
-			}
+			generateGradient((ViewGroup) findViewById(R.id.content_frame));
 			if (currentGames != null && !currentGames.isEmpty()) {
 				prepareFileListView(true);
 			} else {
@@ -704,6 +702,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             @Override
             public void onUnfolded(UnfoldableView unfoldableView) {
                 mListTouchInterceptor.setClickable(false);
+				findViewById(R.id.game_launch).requestFocus();
             }
             
             @Override
