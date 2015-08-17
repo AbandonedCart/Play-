@@ -117,14 +117,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		{
 			NativeInterop.createVirtualMachine();
 		}
-        
-		Toolbar toolbar = getSupportToolbar();
-		setSupportActionBar(toolbar);
-		toolbar.bringToFront();
 
 		if (isAndroidTV(this)) {
-			configureActionBar();
-			invalidateOptionsMenu();
+			
+
+			generateGradient((ViewGroup) findViewById(R.id.content_frame));
 
 			ListView top_navigation = (ListView) findViewById(R.id.nav_listview);
 			top_navigation.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, new String[]{
@@ -151,6 +148,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				}
 			});
 		} else {
+			Toolbar toolbar = getSupportToolbar();
+			setSupportActionBar(toolbar);
+			toolbar.bringToFront();
+
 			mNavigationDrawerFragment = (NavigationDrawerFragment)
 					getFragmentManager().findFragmentById(R.id.navigation_drawer);
 
@@ -164,29 +165,21 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		getContentResolver().call(Games.GAMES_URI, "importDb", null, null);
 
 		prepareFileListView(false);
-		if (!isAndroidTV(this) && !mNavigationDrawerFragment.isDrawerOpen()) {
+		if (isAndroidTV(this) || !mNavigationDrawerFragment.isDrawerOpen()) {
 			if (!isConfigured) {
-				getSupportActionBar().setTitle(getString(R.string.menu_title_look));
+				setActionBarTitle(getSupportActionBar(), R.string.menu_title_look);
 			} else {
-				getSupportActionBar().setTitle(getString(R.string.menu_title_shut));
+				setActionBarTitle(getSupportActionBar(), R.string.menu_title_shut);
 			}
 		}
 	}
     
-	private ActionBar configureActionBar() {
-		ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setIcon(R.drawable.ic_logo);
-		if (!isConfigured) {
-			actionBar.setTitle(getString(R.string.menu_title_look));
+	private void setActionBarTitle(ActionBar actionBar, int resourceId) {
+		if (isAndroidTV(this)) {
+			((TextView) findViewById(R.id.toolbar_title)).setText(getString(resourceId));
 		} else {
-			actionBar.setTitle(getString(R.string.menu_title_shut));
+			actionBar.setTitle(getString(resourceId));
 		}
-		actionBar.setSubtitle(null);
-		return actionBar;
 	}
 
 	private Toolbar getSupportToolbar() {
@@ -238,6 +231,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		findViewById(R.id.navigation_drawer).setBackgroundColor(Color.parseColor(
 				("#" + Integer.toHexString(attributeResourceId)).replace("#ff", "#8e")
 		));
+		if (isAndroidTV(this)) {
+			findViewById(R.id.awesome_toolbar).setBackgroundColor(Color.parseColor(
+					("#" + Integer.toHexString(attributeResourceId)).replace("#ff", "#8e")
+			));
+		}
 	}
 
 	private static long getBuildDate(Context context) 
@@ -292,7 +290,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			generateGradient((FrameLayout) findViewById(R.id.content_frame));
 		}
 	}
-
 
 	private void displayAboutDialog()
 	{
@@ -459,10 +456,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 	public void restoreActionBar() {
 		ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setIcon(R.drawable.ic_logo);
-		actionBar.setTitle(R.string.menu_title_shut);
-		actionBar.setSubtitle(null);
+		if (!isAndroidTV(this)) {
+			actionBar.setDisplayShowTitleEnabled(true);
+			actionBar.setIcon(R.drawable.ic_logo);
+			actionBar.setSubtitle(null);
+		}
+		setActionBarTitle(actionBar, R.string.menu_title_shut);
 	}
 	
 	private int getStatusBarHeight() {
