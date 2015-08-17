@@ -115,7 +115,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 
 		if (isAndroidTV(this)) {
-			
 
 			generateGradient((ViewGroup) findViewById(R.id.content_frame));
 
@@ -144,7 +143,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 				}
 			});
 		} else {
-			Toolbar toolbar = getSupportToolbar();
+			Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
 			setSupportActionBar(toolbar);
 			toolbar.bringToFront();
 
@@ -176,30 +175,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		} else {
 			actionBar.setTitle(getString(resourceId));
 		}
-	}
-
-	private Toolbar getSupportToolbar() {
-		//this sets toolbar margin, but in effect moving the DrawerLayout
-		int statusBarHeight = getStatusBarHeight();
-
-		View toolbar = findViewById(R.id.my_awesome_toolbar);
-		final ViewGroup content = (ViewGroup) findViewById(R.id.content_frame);
-		
-		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
-		dlp.topMargin = statusBarHeight;
-		content.setLayoutParams(dlp);
-
-		generateGradient(content);
-
-		ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
-		mlp.bottomMargin = - statusBarHeight;
-		toolbar.setLayoutParams(mlp);
-		View navigation_drawer = findViewById(R.id.navigation_drawer);
-		ViewGroup.MarginLayoutParams mlp2 = (ViewGroup.MarginLayoutParams) navigation_drawer.getLayoutParams();
-		mlp2.topMargin = statusBarHeight;
-		navigation_drawer.setLayoutParams(mlp2);
-
-		return (Toolbar) toolbar;
 	}
 
 	private void generateGradient(ViewGroup content) {
@@ -305,7 +280,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		if (newConfig.orientation != currentOrientation) {
 			currentOrientation = newConfig.orientation;
 			if (!isAndroidTV(this)) {
-				getSupportToolbar();
+				generateGradient(findViewById(R.id.content_frame));
 			}
 			if (currentGames != null && !currentGames.isEmpty()) {
 				prepareFileListView(true);
