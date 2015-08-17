@@ -3,9 +3,7 @@
 	android:id="@+id/childview"
 	android:orientation="horizontal"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:clickable="true"
-	android:focusable="true" >
+	android:layout_height="wrap_content" >
 
 	<ImageView
 		android:id="@+id/game_icon"
