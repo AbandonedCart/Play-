@@ -60,15 +60,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	public static final int SORT_NONE = 2;
 	private int sortMethod = SORT_NONE;
 
-    private UnfoldableView mUnfoldableView;
-    private View mListTouchInterceptor;
-    private FrameLayout mDetailsLayout;
+	private UnfoldableView mUnfoldableView;
+	private View mListTouchInterceptor;
+	private FrameLayout mDetailsLayout;
 
-	//To prevent multiple padding buildups on multiple rotations.
-	private int relative_layout_original_right_padding;
-	private int navigation_drawer_original_bottom_padding;
-
-	@Override 
+	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
