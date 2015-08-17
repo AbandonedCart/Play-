@@ -113,11 +113,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		{
 			NativeInterop.createVirtualMachine();
 		}
+		
+		generateGradient((ViewGroup) findViewById(R.id.content_frame));
 
 		if (isAndroidTV(this)) {
-
-			generateGradient((ViewGroup) findViewById(R.id.content_frame));
-
 			ListView top_navigation = (ListView) findViewById(R.id.nav_listview);
 			top_navigation.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, new String[]{
 				getString(R.string.file_list_recent),
