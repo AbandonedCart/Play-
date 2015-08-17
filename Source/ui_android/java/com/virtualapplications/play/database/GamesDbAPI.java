@@ -158,8 +158,9 @@ public class GamesDbAPI extends AsyncTask<File, Integer, Document> {
 										if (boxart != null) {
 											cover = gameInfo.getImage(remoteID, childview, boxart);
 										}
-                                        childview.findViewById(R.id.childview).setOnClickListener(
-                                            MainActivity.getClickListener(childview, cover, title, overview, gameFile));
+										childview.setOnClickListener(
+											((MainActivity) mContext).configureOnClick(childview, cover, title, overview, gameFile)
+										);
 									}
 									break;
 								}
@@ -223,8 +224,9 @@ public class GamesDbAPI extends AsyncTask<File, Integer, Document> {
 						if (coverImage != null) {
 							cover = gameInfo.getImage(remoteID, childview, coverImage);
 						}
-                        childview.findViewById(R.id.childview).setOnClickListener(
-                            MainActivity.getClickListener(childview, cover, title, overview, gameFile));
+						childview.setOnClickListener(
+							((MainActivity) mContext).configureOnClick(childview, cover, title, overview, gameFile)
+						);
 					}
 				}
 			} catch (Exception e) {

@@ -20,6 +20,7 @@ import android.widget.*;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -75,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		_preferences = getSharedPreferences("prefs", MODE_PRIVATE);
 		currentOrientation = getResources().getConfiguration().orientation;
 
-		SettingsActivity.ChangeTheme(null,this);
+		SettingsActivity.ChangeTheme(null, this);
 		if (isAndroidTV(this)) {
 			setContentView(R.layout.tele);
 		} else {
@@ -115,14 +116,40 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		{
 			NativeInterop.createVirtualMachine();
 		}
+        
+		Toolbar toolbar = getSupportToolbar();
+		setSupportActionBar(toolbar);
+		toolbar.bringToFront();
 
-//		if (isAndroidTV(this)) {
-//			// Load the menus for Android TV
-//		} else {
-			Toolbar toolbar = getSupportToolbar();
-			setSupportActionBar(toolbar);
-			toolbar.bringToFront();
+		if (isAndroidTV(this)) {
+			configureActionBar();
+			invalidateOptionsMenu();
 
+			ListView top_navigation = (ListView) findViewById(R.id.nav_listview);
+			top_navigation.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, new String[]{
+				getString(R.string.file_list_recent),
+				getString(R.string.file_list_homebrew),
+				getString(R.string.file_list_default)
+			}));
+			top_navigation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					selectionTop(position);
+				}
+			});
+			ListView bottom_navigation = (ListView) findViewById(R.id.nav_listview_bottom);
+			bottom_navigation.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, new String[]{
+				getString(R.string.main_menu_settings),
+				getString(R.string.main_menu_debug),
+				getString(R.string.main_menu_about)
+			}));
+			bottom_navigation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					selectionBottom(position);
+				}
+			});
+		} else {
 			mNavigationDrawerFragment = (NavigationDrawerFragment)
 					getFragmentManager().findFragmentById(R.id.navigation_drawer);
 
@@ -130,20 +157,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			mNavigationDrawerFragment.setUp(
 					R.id.navigation_drawer,
 					(DrawerLayout) findViewById(R.id.drawer_layout));
-
-			TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorPrimaryDark});
-			int attributeResourceId = a.getColor(0, 0);
-			a.recycle();
-			findViewById(R.id.navigation_drawer).setBackgroundColor(Color.parseColor(
-					("#" + Integer.toHexString(attributeResourceId)).replace("#ff", "#8e")
-			));
-//		}
+		}
 
 		gameInfo = new GameInfo(MainActivity.this);
 		getContentResolver().call(Games.GAMES_URI, "importDb", null, null);
 
 		prepareFileListView(false);
-		if (!mNavigationDrawerFragment.isDrawerOpen()) {
+		if (!isAndroidTV(this) && !mNavigationDrawerFragment.isDrawerOpen()) {
 			if (!isConfigured) {
 				getSupportActionBar().setTitle(getString(R.string.menu_title_look));
 			} else {
@@ -151,13 +171,29 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			}
 		}
 	}
+    
+	private ActionBar configureActionBar() {
+		ActionBar actionBar = getSupportActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setIcon(R.drawable.ic_logo);
+		if (!isConfigured) {
+			actionBar.setTitle(getString(R.string.menu_title_look));
+		} else {
+			actionBar.setTitle(getString(R.string.menu_title_shut));
+		}
+		actionBar.setSubtitle(null);
+		return actionBar;
+	}
 
 	private Toolbar getSupportToolbar() {
 		//this sets toolbar margin, but in effect moving the DrawerLayout
 		int statusBarHeight = getStatusBarHeight();
 
 		View toolbar = findViewById(R.id.my_awesome_toolbar);
-		final FrameLayout content = (FrameLayout) findViewById(R.id.content_frame);
+		final ViewGroup content = (ViewGroup) findViewById(R.id.content_frame);
 		
 		ViewGroup.MarginLayoutParams dlp = (ViewGroup.MarginLayoutParams) content.getLayoutParams();
 		dlp.topMargin = statusBarHeight;
@@ -214,7 +250,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		return (Toolbar) toolbar;
 	}
 
-	private void generateGradient(FrameLayout content) {
+	private void generateGradient(ViewGroup content) {
 		if (content != null) {
 			int[] colors = new int[2];// you can increase array size to add more colors to gradient.
 			TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientStart});
@@ -261,12 +297,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		Point size = new Point();
 
 		if (Build.VERSION.SDK_INT >= 17) {
-		display.getRealSize(size);
+            display.getRealSize(size);
 		} else if (Build.VERSION.SDK_INT >= 14) {
-		try {
-			size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
-			size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
-		} catch (IllegalAccessException e) {} catch (InvocationTargetException e) {} catch (NoSuchMethodException e) {}
+            try {
+                size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
+                size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
+            }
+            catch (IllegalAccessException e) {}
+            catch (InvocationTargetException e) {}
+            catch (NoSuchMethodException e) {}
 		}
 
 		return size;
@@ -338,10 +377,14 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		mNavigationDrawerFragment.onConfigurationChanged(newConfig);
+		if (!isAndroidTV(this)) {
+			mNavigationDrawerFragment.onConfigurationChanged(newConfig);
+		}
 		if (newConfig.orientation != currentOrientation) {
 			currentOrientation = newConfig.orientation;
-			getSupportToolbar();
+			if (!isAndroidTV(this)) {
+				getSupportToolbar();
+			}
 			if (currentGames != null && !currentGames.isEmpty()) {
 				prepareFileListView(true);
 			} else {
@@ -443,42 +486,50 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			fileName.toLowerCase().endsWith(".cso") ||
 			fileName.toLowerCase().endsWith(".isz");
 	}
+    
+    private void selectionTop(int position) {
+        switch (position) {
+            case 0:
+                sortMethod = SORT_RECENT;
+                prepareFileListView(false);
+                break;
+            case 1:
+                sortMethod = SORT_HOMEBREW;
+                prepareFileListView(false);
+                break;
+            case 2:
+                sortMethod = SORT_NONE;
+                prepareFileListView(false);
+                break;
+        }
+    }
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
-		switch (position) {
-			case 0:
-				sortMethod = SORT_RECENT;
-				prepareFileListView(false);
-				break;
-			case 1:
-				sortMethod = SORT_HOMEBREW;
-				prepareFileListView(false);
-				break;
-			case 2:
-				sortMethod = SORT_NONE;
-				prepareFileListView(false);
-				break;
-		}
+        selectionTop(position);
 	}
+    
+    private void selectionBottom(int position) {
+        switch (position) {
+            case 0:
+                displaySettingsActivity();
+                break;
+            case 1:
+                generateErrorLog();
+                break;
+            case 2:
+                displayAboutDialog();
+                break;
+        }
+    }
 
 	@Override
 	public void onNavigationDrawerBottomItemSelected(int position) {
-		switch (position) {
-			case 0:
-				displaySettingsActivity();
-				break;
-			case 1:
-				generateErrorLog();
-				break;
-			case 2:
-				displayAboutDialog();
-				break;
-		}
+        selectionBottom(position);
 	}
 
 	public void restoreActionBar() {
-		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+		ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setIcon(R.drawable.ic_logo);
 		actionBar.setTitle(R.string.menu_title_shut);
@@ -496,7 +547,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (!mNavigationDrawerFragment.isDrawerOpen()) {
+		if (isAndroidTV(this) || !mNavigationDrawerFragment.isDrawerOpen()) {
 			restoreActionBar();
 			return true;
 		}
@@ -516,11 +567,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_MENU) {
-			if (mNavigationDrawerFragment.isDrawerOpen()) {
-				mNavigationDrawerFragment.mDrawerLayout.closeDrawer(NavigationDrawerFragment.mFragmentContainerView);
-			} else {
-				mNavigationDrawerFragment.mDrawerLayout.openDrawer(NavigationDrawerFragment.mFragmentContainerView);
-			}
+            if (!isAndroidTV(this)) {
+                if (mNavigationDrawerFragment.isDrawerOpen()) {
+                    mNavigationDrawerFragment.mDrawerLayout.closeDrawer(NavigationDrawerFragment.mFragmentContainerView);
+                } else {
+                    mNavigationDrawerFragment.mDrawerLayout.openDrawer(NavigationDrawerFragment.mFragmentContainerView);
+                }
+            }
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
@@ -617,7 +670,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			
 			((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
 			
-			childview.findViewById(R.id.childview).setOnClickListener(new OnClickListener() {
+			childview.setOnClickListener(new OnClickListener() {
 				public void onClick(View view) {
 					setCurrentDirectory(game.getPath().substring(0,
 						game.getPath().lastIndexOf(File.separator)));
@@ -628,6 +681,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			});
 			
 			return childview;
+
 		} else {
 		
 			((TextView) childview.findViewById(R.id.game_text)).setText(game.getName());
@@ -640,20 +694,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 					cover = gameInfo.getImage(gameStats[0], childview, gameStats[3]);
 					((TextView) childview.findViewById(R.id.game_text)).setVisibility(View.GONE);
 				}
-                childview.findViewById(R.id.childview).setOnClickListener(
-                    configureOnClick(childview, cover, gameStats[1], gameStats[2], game));
+				childview.setOnClickListener(
+					configureOnClick(childview, cover, gameStats[1], gameStats[2], game)
+				);
             } else {
-                childview.findViewById(R.id.childview).setOnClickListener(
-                    configureOnClick(childview, null, game.getName(), null, game));
+				childview.setOnClickListener(
+					configureOnClick(childview, null, game.getName(), null, game)
+				);
             }
+
 			return childview;
 		}
 	}
-    
-    public static OnClickListener getClickListener(View childview, Bitmap cover, String title, String overview, File game) {
-        return ((MainActivity) mActivity).configureOnClick(childview, cover, title, overview, game);
-    }
-    
+
     public OnClickListener configureOnClick(final View childview, final Bitmap cover, final String title, final String overview, final File game) {
         return new OnClickListener() {
             public void onClick(View view) {
@@ -838,7 +891,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		startActivity(intent);
 	}
 	
-	private boolean isAndroidTV(Context context) {
+	public boolean isAndroidTV(Context context) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			UiModeManager uiModeManager = (UiModeManager)
 					context.getSystemService(Context.UI_MODE_SERVICE);

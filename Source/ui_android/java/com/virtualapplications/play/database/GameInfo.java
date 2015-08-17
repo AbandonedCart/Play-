@@ -24,8 +24,6 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
