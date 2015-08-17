@@ -167,6 +167,7 @@
 		874ECDE71B7E749A000075B6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 874ECDE61B7E749A000075B6 /* ImageIO.framework */; };
 		874ECDE81B7E74C2000075B6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 705342D81B78122400477EC4 /* CoreGraphics.framework */; };
 		874ECDF21B7E7DA4000075B6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 874ECDF11B7E7DA4000075B6 /* Images.xcassets */; };
+		876AA37C1B82413300617242 /* BackgroundLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 876AA37B1B82413300617242 /* BackgroundLayer.m */; };
 		87C208B61B7A3E6000638BDD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B51B7A3E6000638BDD /* QuartzCore.framework */; };
 		87C208B81B7A3E6900638BDD /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B71B7A3E6900638BDD /* OpenGLES.framework */; };
 		87C208BA1B7A3E7500638BDD /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B91B7A3E7500638BDD /* libbz2.dylib */; };
@@ -526,6 +527,8 @@
 		874ECDE41B7E7250000075B6 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = "Play!/SDWebImage.framework"; sourceTree = "<group>"; };
 		874ECDE61B7E749A000075B6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
 		874ECDF11B7E7DA4000075B6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Play!/Images.xcassets"; sourceTree = "<group>"; };
+		876AA37A1B82413300617242 /* BackgroundLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundLayer.h; path = ../Source/ui_ios/BackgroundLayer.h; sourceTree = "<group>"; };
+		876AA37B1B82413300617242 /* BackgroundLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BackgroundLayer.m; path = ../Source/ui_ios/BackgroundLayer.m; sourceTree = "<group>"; };
 		87C208B51B7A3E6000638BDD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		87C208B71B7A3E6900638BDD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		87C208B91B7A3E7500638BDD /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
@@ -620,6 +623,8 @@
 				70834AEF1B1BCB9E00E8D5C6 /* LaunchScreen.xib */,
 				70834AE61B1BCB0100E8D5C6 /* main.mm */,
 				70834AF11B1BCB9E00E8D5C6 /* Main.storyboard */,
+				876AA37A1B82413300617242 /* BackgroundLayer.h */,
+				876AA37B1B82413300617242 /* BackgroundLayer.m */,
 				87DCDB311B7F03260054D67C /* CoverViewController.h */,
 				87DCDB321B7F03260054D67C /* CoverViewController.m */,
 				70287BE51B5F3A2400B53235 /* MainViewController.h */,
@@ -1189,6 +1194,7 @@
 				70834BF81B1BD6A300E8D5C6 /* Vif.cpp in Sources */,
 				7075D0B51B63260F0010D69C /* DiskUtils.cpp in Sources */,
 				70AD23971B39199300137AA0 /* XpsSaveImporter.cpp in Sources */,
+				876AA37C1B82413300617242 /* BackgroundLayer.m in Sources */,
 				70834B7D1B1BD2C300E8D5C6 /* StructCollectionStateFile.cpp in Sources */,
 				70834C811B1BD70700E8D5C6 /* Iop_Spu.cpp in Sources */,
 				70834C7A1B1BD70700E8D5C6 /* Iop_RootCounters.cpp in Sources */,
