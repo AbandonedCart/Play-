@@ -114,7 +114,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			NativeInterop.createVirtualMachine();
 		}
 		
-		generateGradient((ViewGroup) findViewById(R.id.content_frame));
+		generateGradient();
 
 		if (isAndroidTV(this)) {
 			ListView top_navigation = (ListView) findViewById(R.id.nav_listview);
@@ -176,7 +176,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 	}
 
-	private void generateGradient(ViewGroup content) {
+	private void generateGradient() {
+		ViewGroup content = (ViewGroup) findViewById(R.id.content_frame);
 		if (content != null) {
 			int[] colors = new int[2];// you can increase array size to add more colors to gradient.
 			TypedArray a = getTheme().obtainStyledAttributes(new int[]{R.attr.colorGradientStart});
@@ -278,7 +279,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		}
 		if (newConfig.orientation != currentOrientation) {
 			currentOrientation = newConfig.orientation;
-			generateGradient((ViewGroup) findViewById(R.id.content_frame));
+			generateGradient();
 			if (currentGames != null && !currentGames.isEmpty()) {
 				prepareFileListView(true);
 			} else {
