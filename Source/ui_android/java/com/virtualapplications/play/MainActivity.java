@@ -669,12 +669,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		or set a number if you like
 		 */
 		if (isConfigured){
-            gameGrid.setDrawSelectorOnTop(false);
             gameGrid.setNumColumns(GridView.AUTO_FIT);
 			gameGrid.setColumnWidth((int) getResources().getDimension(R.dimen.cover_width));
         } else {
-            gameGrid.setDrawSelectorOnTop(true);
-            gameGrid.setSelector(getResources().getDrawable(R.drawable.game_selector));
             if (isAndroidTV(this)) {
                 gameGrid.setNumColumns(2);
             } else {
