@@ -258,7 +258,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0) {
 			SettingsActivity.ChangeTheme(null, this);
-			generateGradient((FrameLayout) findViewById(R.id.content_frame));
+			generateGradient();
 		}
 	}
 
