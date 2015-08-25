@@ -48,14 +48,14 @@
                 android:id="@+id/details_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#C0000000" >
+                android:background="#C0000000"
+				android:visibility="invisible" >
                 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#C0000000"
-                    android:orientation="vertical"
-					android:visibility="invisible" >
+                    android:orientation="vertical" >
                     
                     <Button
                         android:id="@+id/game_launch"
