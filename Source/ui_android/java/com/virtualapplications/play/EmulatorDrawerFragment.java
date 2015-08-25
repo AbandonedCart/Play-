@@ -93,6 +93,9 @@ public class EmulatorDrawerFragment extends Fragment
 		_fragmentView.setBackgroundColor(
 			Color.parseColor(("#" + Integer.toHexString(color)).replace("#ff", "#8e"))
 		);
+		if (MainActivity.diskBackground != null) {
+			_fragmentView.setBackgroundDrawable(MainActivity.diskBackground);
+		}
 	}
 	
 	public void openDrawer()

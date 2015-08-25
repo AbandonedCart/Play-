@@ -63,6 +63,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	private UnfoldableView mUnfoldableView;
 	private View mListTouchInterceptor;
 	private FrameLayout mDetailsLayout;
+	
+	public static BitmapDrawable diskBackground;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -152,7 +154,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			// Set up the drawer.
 			mNavigationDrawerFragment.setUp(
 					R.id.navigation_drawer,
-					(DrawerLayout) findViewById(R.id.drawer_layout));
+					(DrawerLayout) findViewById(R.id.drawer_layout)
+			);
 		}
 
 		gameInfo = new GameInfo(MainActivity.this);
@@ -610,7 +613,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 if (cover != null) {
                     BitmapDrawable backgroundDrawable = new BitmapDrawable(cover);
                     mDetailsLayout.setBackgroundDrawable(backgroundDrawable);
-                }
+					MainActivity.diskBackground = backgroundDrawable;
+				} else {
+					MainActivity.diskBackground = null;
+				}
                 if (overview != null) {
                     TextView detailView = (TextView) mDetailsLayout.findViewById(R.id.game_details);
                     detailView.setText(overview);
