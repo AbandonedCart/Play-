@@ -89,12 +89,15 @@ public class EmulatorDrawerFragment extends Fragment
 		_drawerLayout = drawerLayout;
 		_drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-		int color = ThemeManager.getThemeColor(getActivity(), R.attr.colorPrimaryDark);
-		_fragmentView.setBackgroundColor(
-			Color.parseColor(("#" + Integer.toHexString(color)).replace("#ff", "#8e"))
-		);
 		if (MainActivity.diskBackground != null) {
 			_fragmentView.setBackgroundDrawable(MainActivity.diskBackground);
+			_listView.setBackgroundColor(Color.parseColor("#C0000000"));
+		} else {
+			int color = ThemeManager.getThemeColor(getActivity(), R.attr.colorPrimaryDark);
+			_fragmentView.setBackgroundColor(
+				Color.parseColor(("#" + Integer.toHexString(color)).replace("#ff", "#8e"))
+			);
+			_listView.setBackgroundColor(Color.TRANSPARENT);
 		}
 	}
 	

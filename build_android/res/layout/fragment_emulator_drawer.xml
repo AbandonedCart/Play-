@@ -14,7 +14,6 @@
 		android:divider="@android:color/transparent"
 		android:dividerHeight="0dp"
 		android:stackFromBottom="true"
-		android:background="#C0000000"
 		tools:context=".EmulatorDrawerFragment" 
 	/>
 </LinearLayout>
