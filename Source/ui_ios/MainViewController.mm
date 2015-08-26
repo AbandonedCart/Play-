@@ -121,7 +121,7 @@
     } else {
         cell.nameLabel.text = [game objectForKey:@"title"];
     }
-    if (![[game objectForKey:@"boxart"] isEqual:@"404"]) {
+	if ([game objectForKey:@"boxart"] != nil && ![[game objectForKey:@"boxart"] isEqual:@"404"]) {
         NSString *imageIcon = [[NSString alloc] initWithFormat:@"http://thegamesdb.net/banners/%@", [game objectForKey:@"boxart"]];
         [cell.coverImage setImageWithURL:[NSURL URLWithString:imageIcon] placeholderImage:[UIImage imageNamed:@"boxart.png"]];
     }
