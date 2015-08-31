@@ -2,7 +2,7 @@
 #import "EmulatorViewController.h"
 #import "IosUtils.h"
 #import "DiskUtils.h"
-#import "CoverViewCell.h"
+#import "MainViewCell.h"
 #import "BackgroundLayer.h"
 
 @interface MainViewController ()
@@ -111,7 +111,7 @@
 {
     static NSString *CellIdentifier = @"detailCell";
     
-    CoverViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    MainViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     NSDictionary *disk = [self.mainView.diskImages objectAtIndex: indexPath.row];
     NSString* diskId = [disk objectForKey:@"serial"];
     
