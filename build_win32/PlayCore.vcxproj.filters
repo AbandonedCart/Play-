@@ -442,6 +442,9 @@
     <ClCompile Include="..\Source\DiskUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\VirtualPad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\AppConfig.h">
@@ -867,5 +870,14 @@
     <ClInclude Include="..\Source\OsVariableWrapper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
+=======
+    <ClInclude Include="..\Source\SifDefs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\VirtualPad.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+>>>>>>> 546fe5f... Copied Android's virtual pad layouting logic to a C++ file.
   </ItemGroup>
 </Project>
