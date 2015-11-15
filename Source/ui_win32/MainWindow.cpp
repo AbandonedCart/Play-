@@ -271,8 +271,8 @@ long CMainWindow::OnCommand(unsigned short nID, unsigned short nCmd, HWND hSende
 	case ID_MAIN_VIEW_ACTUALSIZE:
 		ChangeViewMode(CGSHandler::PRESENTATION_MODE_ORIGINAL);
 		break;
-	case ID_MAIN_OPTIONS_RENDERER:
-		ShowRendererSettings();
+	case ID_MAIN_OPTIONS_VIDEO:
+		ShowVideoSettings();
 		break;
 	case ID_MAIN_OPTIONS_CONTROLLER:
 		ShowControllerSettings();
@@ -550,7 +550,7 @@ void CMainWindow::ShowSettingsDialog(CSettingsDialogProvider* provider)
 	Redraw();
 }
 
-void CMainWindow::ShowRendererSettings()
+void CMainWindow::ShowVideoSettings()
 {
 	ShowSettingsDialog(dynamic_cast<CSettingsDialogProvider*>(m_virtualMachine.GetGSHandler()));
 }
