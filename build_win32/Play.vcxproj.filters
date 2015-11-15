@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -22,6 +22,12 @@
     </Filter>
     <Filter Include="Source Files\GSH_Direct3D9">
       <UniqueIdentifier>{d88718a1-4063-436d-b08b-da90d6ee383b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VirtualPad">
+      <UniqueIdentifier>{d173c7f2-daaf-4c46-aecd-4ebca9a329ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PH_Generic">
+      <UniqueIdentifier>{d958dc2f-49d3-4d46-83eb-630f8d215733}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -238,7 +244,22 @@
     <ClCompile Include="..\Source\gs\GSH_OpenGL\GSH_OpenGL_Texture.cpp">
       <Filter>Source Files\GSH_OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\ui_win32\RendererSettingsWnd.cpp">
+    <ClCompile Include="..\Source\ui_win32\VirtualPad\VirtualPadWindow.cpp">
+      <Filter>Source Files\VirtualPad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ui_win32\VirtualPad\VirtualPadButton.cpp">
+      <Filter>Source Files\VirtualPad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ui_win32\VirtualPad\VirtualPadItem.cpp">
+      <Filter>Source Files\VirtualPad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ui_win32\VirtualPad\VirtualPadStick.cpp">
+      <Filter>Source Files\VirtualPad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PH_Generic.cpp">
+      <Filter>Source Files\PH_Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ui_win32\GSH_OpenGL_SettingsWnd.cpp">
       <Filter>Source Files\GSH_OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
@@ -459,7 +480,22 @@
     <ClInclude Include="..\Source\gs\GSH_OpenGL\GSH_OpenGL.h">
       <Filter>Source Files\GSH_OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\ui_win32\RendererSettingsWnd.h">
+    <ClInclude Include="..\Source\ui_win32\VirtualPad\VirtualPadWindow.h">
+      <Filter>Source Files\VirtualPad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ui_win32\VirtualPad\VirtualPadItem.h">
+      <Filter>Source Files\VirtualPad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ui_win32\VirtualPad\VirtualPadButton.h">
+      <Filter>Source Files\VirtualPad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ui_win32\VirtualPad\VirtualPadStick.h">
+      <Filter>Source Files\VirtualPad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\PH_Generic.h">
+      <Filter>Source Files\PH_Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ui_win32\GSH_OpenGL_SettingsWnd.h">
       <Filter>Source Files\GSH_OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
