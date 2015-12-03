@@ -681,7 +681,7 @@ void CMainWindow::BootCDROM()
 
 	try
 	{
-		os.BootFromCDROM(CPS2OS::ArgumentList());
+		os.BootFromCDROM();
 #ifndef _DEBUG
 		m_virtualMachine.Resume();
 #endif
