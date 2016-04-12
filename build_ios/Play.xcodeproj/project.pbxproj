@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3596B77D28501F8CD76C0AD3 /* libPods-Play!.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A4BF57636C5D1376585E630 /* libPods-Play!.a */; };
 		7001D6451BE5457C008B6205 /* cross.png in Resources */ = {isa = PBXBuildFile; fileRef = 7001D63B1BE5457C008B6205 /* cross.png */; };
 		7001D6461BE5457C008B6205 /* down.png in Resources */ = {isa = PBXBuildFile; fileRef = 7001D63C1BE5457C008B6205 /* down.png */; };
 		7001D6471BE5457C008B6205 /* left.png in Resources */ = {isa = PBXBuildFile; fileRef = 7001D63D1BE5457C008B6205 /* left.png */; };
@@ -19,16 +20,18 @@
 		7001D64E1BE5457C008B6205 /* up.png in Resources */ = {isa = PBXBuildFile; fileRef = 7001D6441BE5457C008B6205 /* up.png */; };
 		7001D6511BE54582008B6205 /* analogstick.png in Resources */ = {isa = PBXBuildFile; fileRef = 7001D64F1BE54582008B6205 /* analogstick.png */; };
 		7001D6521BE54582008B6205 /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7001D6501BE54582008B6205 /* circle.png */; };
-		70287BE41B5F3A0300B53235 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70287BE31B5F3A0300B53235 /* MainViewController.mm */; };
 		704E1C4E1B3BA0B200C0ACE3 /* GSH_OpenGLiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 704E1C4C1B3BA0B200C0ACE3 /* GSH_OpenGLiOS.cpp */; };
 		704E1C531B3BA25000C0ACE3 /* GSH_OpenGL_Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 704E1C4F1B3BA25000C0ACE3 /* GSH_OpenGL_Shader.cpp */; };
 		704E1C541B3BA25000C0ACE3 /* GSH_OpenGL_Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 704E1C501B3BA25000C0ACE3 /* GSH_OpenGL_Texture.cpp */; };
 		704E1C551B3BA25000C0ACE3 /* GSH_OpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 704E1C511B3BA25000C0ACE3 /* GSH_OpenGL.cpp */; };
 		705342D91B78122400477EC4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 705342D81B78122400477EC4 /* CoreGraphics.framework */; };
 		705877341BE58A4B00213FFC /* PH_Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705877321BE58A4B00213FFC /* PH_Generic.cpp */; };
+		705AA9701C55675000775613 /* Iop_MtapMan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 705AA96E1C55675000775613 /* Iop_MtapMan.cpp */; };
 		70603E1F1B60A94400935E3C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70603E1E1B60A94400935E3C /* Images.xcassets */; };
+		7066B4BD1C3EB820007568BB /* SettingsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7066B4BC1C3EB820007568BB /* SettingsViewController.mm */; };
 		7075D0B51B63260F0010D69C /* DiskUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7075D0B31B63260F0010D69C /* DiskUtils.cpp */; };
 		7075D0BB1B634B470010D69C /* IosUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7075D0B91B634B470010D69C /* IosUtils.cpp */; };
+		7076A8011C8A7D7500C6B873 /* Iop_Thvpool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7076A7FF1C8A7D7500C6B873 /* Iop_Thvpool.cpp */; };
 		70834AE91B1BCB0100E8D5C6 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70834AE41B1BCB0100E8D5C6 /* AppDelegate.mm */; };
 		70834AEA1B1BCB0100E8D5C6 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 70834AE51B1BCB0100E8D5C6 /* Info.plist */; };
 		70834AEB1B1BCB0100E8D5C6 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70834AE61B1BCB0100E8D5C6 /* main.mm */; };
@@ -183,22 +186,19 @@
 		874ECDA61B7DB0F6000075B6 /* SqliteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 874ECDA51B7DB0F6000075B6 /* SqliteDatabase.m */; };
 		874ECDAA1B7DB862000075B6 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 874ECDA91B7DB862000075B6 /* libsqlite3.dylib */; };
 		874ECDAC1B7DB9EB000075B6 /* games.db in Resources */ = {isa = PBXBuildFile; fileRef = 874ECDA81B7DB3DF000075B6 /* games.db */; };
-		874ECDE71B7E749A000075B6 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 874ECDE61B7E749A000075B6 /* ImageIO.framework */; };
-		874ECDE81B7E74C2000075B6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 705342D81B78122400477EC4 /* CoreGraphics.framework */; };
-		874ECDF21B7E7DA4000075B6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 874ECDF11B7E7DA4000075B6 /* Images.xcassets */; };
 		876AA37C1B82413300617242 /* BackgroundLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 876AA37B1B82413300617242 /* BackgroundLayer.m */; };
-		8794D9961B88AF2F00B1B3A3 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8794D9951B88AF2F00B1B3A3 /* SDWebImage.framework */; };
+		8794D9AE1B88B60100B1B3A3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8794D9AD1B88B60100B1B3A3 /* QuartzCore.framework */; };
+		8794D9B01B88B60900B1B3A3 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8794D9AF1B88B60900B1B3A3 /* OpenGLES.framework */; };
+		8794D9B21B88B61400B1B3A3 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8794D9B11B88B61400B1B3A3 /* libbz2.dylib */; };
+		8794D9B41B88B61C00B1B3A3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8794D9B31B88B61C00B1B3A3 /* UIKit.framework */; };
 		879A687D1B94D344001D4262 /* CoverViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 879A687C1B94D344001D4262 /* CoverViewCell.m */; };
-		87C208B61B7A3E6000638BDD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B51B7A3E6000638BDD /* QuartzCore.framework */; };
-		87C208B81B7A3E6900638BDD /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B71B7A3E6900638BDD /* OpenGLES.framework */; };
-		87C208BA1B7A3E7500638BDD /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208B91B7A3E7500638BDD /* libbz2.dylib */; };
-		87C208BC1B7A3E7A00638BDD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208BB1B7A3E7A00638BDD /* UIKit.framework */; };
+		87BF773F1CBCD1EE00573921 /* boost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87BF773D1CBCD19200573921 /* boost.a */; };
+		87BF778B1CBCEBD700573921 /* MainViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87BF77881CBCEBD700573921 /* MainViewCell.m */; };
+		87BF778C1CBCEBD700573921 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 87BF778A1CBCEBD700573921 /* MainViewController.mm */; };
 		87C208BE1B7A3E7E00638BDD /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208BD1B7A3E7E00638BDD /* GameController.framework */; };
-		87C208C21B7A3F6900638BDD /* boost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C208C11B7A3F6900638BDD /* boost.a */; };
 		87C4CC341B75010700CE6D3C /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C4CC311B75010700CE6D3C /* iCadeReaderView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		87DCDB331B7F03260054D67C /* CoverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87DCDB321B7F03260054D67C /* CoverViewController.m */; };
 		87DCDB381B7F13370054D67C /* CollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 87DCDB371B7F13370054D67C /* CollectionView.m */; };
-		87EBC5AB1B7C573300018B42 /* MainViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87EBC5AA1B7C573300018B42 /* MainViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -233,6 +233,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2AB2AB5CB5A4D4903F48EA33 /* Pods-Play!.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Play!.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Play!/Pods-Play!.debug.xcconfig"; sourceTree = "<group>"; };
+		6798F90FC4EA24B8A8B5C627 /* Pods-Play!.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Play!.release.xcconfig"; path = "Pods/Target Support Files/Pods-Play!/Pods-Play!.release.xcconfig"; sourceTree = "<group>"; };
 		7001D63B1BE5457C008B6205 /* cross.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cross.png; sourceTree = "<group>"; };
 		7001D63C1BE5457C008B6205 /* down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = down.png; sourceTree = "<group>"; };
 		7001D63D1BE5457C008B6205 /* left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = left.png; sourceTree = "<group>"; };
@@ -245,8 +247,6 @@
 		7001D6441BE5457C008B6205 /* up.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = up.png; sourceTree = "<group>"; };
 		7001D64F1BE54582008B6205 /* analogstick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = analogstick.png; sourceTree = "<group>"; };
 		7001D6501BE54582008B6205 /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = circle.png; sourceTree = "<group>"; };
-		70287BE31B5F3A0300B53235 /* MainViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainViewController.mm; path = ../Source/ui_ios/MainViewController.mm; sourceTree = "<group>"; };
-		70287BE51B5F3A2400B53235 /* MainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainViewController.h; path = ../Source/ui_ios/MainViewController.h; sourceTree = "<group>"; };
 		704E1C4C1B3BA0B200C0ACE3 /* GSH_OpenGLiOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GSH_OpenGLiOS.cpp; path = ../Source/ui_ios/GSH_OpenGLiOS.cpp; sourceTree = "<group>"; };
 		704E1C4D1B3BA0B200C0ACE3 /* GSH_OpenGLiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GSH_OpenGLiOS.h; path = ../Source/ui_ios/GSH_OpenGLiOS.h; sourceTree = "<group>"; };
 		704E1C4F1B3BA25000C0ACE3 /* GSH_OpenGL_Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GSH_OpenGL_Shader.cpp; path = ../Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp; sourceTree = "<group>"; };
@@ -256,11 +256,18 @@
 		705342D81B78122400477EC4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		705877321BE58A4B00213FFC /* PH_Generic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PH_Generic.cpp; path = ../Source/PH_Generic.cpp; sourceTree = "<group>"; };
 		705877331BE58A4B00213FFC /* PH_Generic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PH_Generic.h; path = ../Source/PH_Generic.h; sourceTree = "<group>"; };
+		705AA96E1C55675000775613 /* Iop_MtapMan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Iop_MtapMan.cpp; path = ../Source/iop/Iop_MtapMan.cpp; sourceTree = "<group>"; };
+		705AA96F1C55675000775613 /* Iop_MtapMan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Iop_MtapMan.h; path = ../Source/iop/Iop_MtapMan.h; sourceTree = "<group>"; };
 		70603E1E1B60A94400935E3C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Play!/Images.xcassets"; sourceTree = "<group>"; };
+		7066B4BC1C3EB820007568BB /* SettingsViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SettingsViewController.mm; path = ../Source/ui_ios/SettingsViewController.mm; sourceTree = "<group>"; };
+		7066B4BF1C3EB87C007568BB /* SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SettingsViewController.h; path = ../Source/ui_ios/SettingsViewController.h; sourceTree = "<group>"; };
+		7066B4C01C3F3BC9007568BB /* PreferenceDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PreferenceDefs.h; path = ../Source/ui_ios/PreferenceDefs.h; sourceTree = "<group>"; };
 		7075D0B31B63260F0010D69C /* DiskUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DiskUtils.cpp; path = ../Source/DiskUtils.cpp; sourceTree = "<group>"; };
 		7075D0B41B63260F0010D69C /* DiskUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiskUtils.h; path = ../Source/DiskUtils.h; sourceTree = "<group>"; };
 		7075D0B91B634B470010D69C /* IosUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IosUtils.cpp; path = ../Source/ui_ios/IosUtils.cpp; sourceTree = "<group>"; };
 		7075D0BA1B634B470010D69C /* IosUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IosUtils.h; path = ../Source/ui_ios/IosUtils.h; sourceTree = "<group>"; };
+		7076A7FF1C8A7D7500C6B873 /* Iop_Thvpool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Iop_Thvpool.cpp; path = ../Source/iop/Iop_Thvpool.cpp; sourceTree = "<group>"; };
+		7076A8001C8A7D7500C6B873 /* Iop_Thvpool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Iop_Thvpool.h; path = ../Source/iop/Iop_Thvpool.h; sourceTree = "<group>"; };
 		70834AAE1B1BC70300E8D5C6 /* Play!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Play!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		70834AE31B1BCB0100E8D5C6 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ../Source/ui_ios/AppDelegate.h; sourceTree = "<group>"; };
 		70834AE41B1BCB0100E8D5C6 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = ../Source/ui_ios/AppDelegate.mm; sourceTree = "<group>"; };
@@ -357,7 +364,6 @@
 		70834B541B1BD2C300E8D5C6 /* VirtualMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VirtualMachine.h; path = ../Source/VirtualMachine.h; sourceTree = "<group>"; };
 		70834B821B1BD2E100E8D5C6 /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = ../../Framework/build_ios/Framework.xcodeproj; sourceTree = "<group>"; };
 		70834B881B1BD2F500E8D5C6 /* CodeGen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodeGen.xcodeproj; path = ../../CodeGen/build_ios/CodeGen.xcodeproj; sourceTree = "<group>"; };
-		70834B951B1BD3AC00E8D5C6 /* ExternalDependencies.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ExternalDependencies.xcconfig; sourceTree = "<group>"; };
 		70834B961B1BD3AC00E8D5C6 /* GeneralSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettings.xcconfig; sourceTree = "<group>"; };
 		70834B971B1BD3AC00E8D5C6 /* GeneralSettingsDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettingsDebug.xcconfig; sourceTree = "<group>"; };
 		70834B981B1BD3AC00E8D5C6 /* GeneralSettingsRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettingsRelease.xcconfig; sourceTree = "<group>"; };
@@ -570,18 +576,22 @@
 		874ECDA81B7DB3DF000075B6 /* games.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = games.db; sourceTree = "<group>"; };
 		874ECDA91B7DB862000075B6 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libsqlite3.dylib; sourceTree = DEVELOPER_DIR; };
 		874ECDE61B7E749A000075B6 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
-		874ECDF11B7E7DA4000075B6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Play!/Images.xcassets"; sourceTree = "<group>"; };
 		876AA37A1B82413300617242 /* BackgroundLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundLayer.h; path = ../Source/ui_ios/BackgroundLayer.h; sourceTree = "<group>"; };
 		876AA37B1B82413300617242 /* BackgroundLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BackgroundLayer.m; path = ../Source/ui_ios/BackgroundLayer.m; sourceTree = "<group>"; };
-		8794D9951B88AF2F00B1B3A3 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDWebImage.framework; sourceTree = "<group>"; };
+		8794D9AD1B88B60100B1B3A3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		8794D9AF1B88B60900B1B3A3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		8794D9B11B88B61400B1B3A3 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
+		8794D9B31B88B61C00B1B3A3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		879A687B1B94D344001D4262 /* CoverViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoverViewCell.h; path = ../Source/ui_ios/CoverViewCell.h; sourceTree = "<group>"; };
 		879A687C1B94D344001D4262 /* CoverViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoverViewCell.m; path = ../Source/ui_ios/CoverViewCell.m; sourceTree = "<group>"; };
-		87C208B51B7A3E6000638BDD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
-		87C208B71B7A3E6900638BDD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
-		87C208B91B7A3E7500638BDD /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
-		87C208BB1B7A3E7A00638BDD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		87BF773D1CBCD19200573921 /* boost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = boost.a; path = ../../Dependencies/ofxiOSBoost/libs/boost/ios/boost.a; sourceTree = "<group>"; };
+		87BF77571CBCE11900573921 /* libSDWebImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDWebImage.a; path = "Pods/../build/Release-iphoneos/SDWebImage/libSDWebImage.a"; sourceTree = "<group>"; };
+		87BF775D1CBCE18700573921 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		87BF77871CBCEBD700573921 /* MainViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainViewCell.h; path = ../Source/ui_ios/MainViewCell.h; sourceTree = "<group>"; };
+		87BF77881CBCEBD700573921 /* MainViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainViewCell.m; path = ../Source/ui_ios/MainViewCell.m; sourceTree = "<group>"; };
+		87BF77891CBCEBD700573921 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainViewController.h; path = ../Source/ui_ios/MainViewController.h; sourceTree = "<group>"; };
+		87BF778A1CBCEBD700573921 /* MainViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainViewController.mm; path = ../Source/ui_ios/MainViewController.mm; sourceTree = "<group>"; };
 		87C208BD1B7A3E7E00638BDD /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
-		87C208C11B7A3F6900638BDD /* boost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = boost.a; path = ../../Dependencies/ofxiOSBoost/libs/boost/ios/boost.a; sourceTree = "<group>"; };
 		87C4CC301B75010700CE6D3C /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		87C4CC311B75010700CE6D3C /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		87C4CC321B75010700CE6D3C /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
@@ -589,8 +599,7 @@
 		87DCDB321B7F03260054D67C /* CoverViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CoverViewController.m; path = ../Source/ui_ios/CoverViewController.m; sourceTree = "<group>"; };
 		87DCDB361B7F13370054D67C /* CollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionView.h; path = ../Source/ui_ios/CollectionView.h; sourceTree = "<group>"; };
 		87DCDB371B7F13370054D67C /* CollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CollectionView.m; path = ../Source/ui_ios/CollectionView.m; sourceTree = "<group>"; };
-		87EBC5A91B7C573300018B42 /* MainViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainViewCell.h; path = ../Source/ui_ios/MainViewCell.h; sourceTree = "<group>"; };
-		87EBC5AA1B7C573300018B42 /* MainViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainViewCell.m; path = ../Source/ui_ios/MainViewCell.m; sourceTree = "<group>"; };
+		9A4BF57636C5D1376585E630 /* libPods-Play!.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Play!.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -598,25 +607,48 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				874ECDE81B7E74C2000075B6 /* CoreGraphics.framework in Frameworks */,
-				874ECDE71B7E749A000075B6 /* ImageIO.framework in Frameworks */,
+				8794D9B41B88B61C00B1B3A3 /* UIKit.framework in Frameworks */,
+				8794D9B21B88B61400B1B3A3 /* libbz2.dylib in Frameworks */,
+				8794D9B01B88B60900B1B3A3 /* OpenGLES.framework in Frameworks */,
+				8794D9AE1B88B60100B1B3A3 /* QuartzCore.framework in Frameworks */,
+				705342D91B78122400477EC4 /* CoreGraphics.framework in Frameworks */,
 				874ECDAA1B7DB862000075B6 /* libsqlite3.dylib in Frameworks */,
 				87C208BE1B7A3E7E00638BDD /* GameController.framework in Frameworks */,
-				87C208BC1B7A3E7A00638BDD /* UIKit.framework in Frameworks */,
-				87C208BA1B7A3E7500638BDD /* libbz2.dylib in Frameworks */,
-				87C208B81B7A3E6900638BDD /* OpenGLES.framework in Frameworks */,
-				87C208B61B7A3E6000638BDD /* QuartzCore.framework in Frameworks */,
 				70834CE11B1BD7EE00E8D5C6 /* libz.dylib in Frameworks */,
-				8794D9961B88AF2F00B1B3A3 /* SDWebImage.framework in Frameworks */,
 				70834CDE1B1BD7DE00E8D5C6 /* libCodeGen.a in Frameworks */,
 				70834CDF1B1BD7DE00E8D5C6 /* libFramework.a in Frameworks */,
-				87C208C21B7A3F6900638BDD /* boost.a in Frameworks */,
+				87BF773F1CBCD1EE00573921 /* boost.a in Frameworks */,
+				3596B77D28501F8CD76C0AD3 /* libPods-Play!.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		45F6B6A8F96EE27A29F9EA7A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2AB2AB5CB5A4D4903F48EA33 /* Pods-Play!.debug.xcconfig */,
+				6798F90FC4EA24B8A8B5C627 /* Pods-Play!.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		7066B4BE1C3EB838007568BB /* VirtualPad */ = {
+			isa = PBXGroup;
+			children = (
+				70D3A86D1BDF1746005494CE /* VirtualPadButton.h */,
+				70D3A86E1BDF1746005494CE /* VirtualPadButton.mm */,
+				70D3A86F1BDF1746005494CE /* VirtualPadItem.h */,
+				70D3A8701BDF1746005494CE /* VirtualPadItem.mm */,
+				70D3A8711BDF1746005494CE /* VirtualPadStick.h */,
+				70D3A8721BDF1746005494CE /* VirtualPadStick.mm */,
+				70D3A8731BDF1746005494CE /* VirtualPadView.h */,
+				70D3A8741BDF1746005494CE /* VirtualPadView.mm */,
+			);
+			name = VirtualPad;
+			sourceTree = "<group>";
+		};
 		70834AA51B1BC70300E8D5C6 = {
 			isa = PBXGroup;
 			children = (
@@ -624,6 +656,8 @@
 				70834B811B1BD2CF00E8D5C6 /* Dependencies */,
 				70834AB01B1BC70300E8D5C6 /* Source Files */,
 				70834AAF1B1BC70300E8D5C6 /* Products */,
+				45F6B6A8F96EE27A29F9EA7A /* Pods */,
+				B5B1B4809742EB8D14085AFF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -639,7 +673,6 @@
 			isa = PBXGroup;
 			children = (
 				874ECDA01B7D980C000075B6 /* Resources */,
-				874ECDF11B7E7DA4000075B6 /* Images.xcassets */,
 				87C4CC2F1B75010700CE6D3C /* iCade-iOS */,
 				70834AFC1B1BCD1200E8D5C6 /* Play Core */,
 				70834AFB1B1BCCFF00E8D5C6 /* ui_ios */,
@@ -652,41 +685,38 @@
 			children = (
 				70834AE31B1BCB0100E8D5C6 /* AppDelegate.h */,
 				70834AE41B1BCB0100E8D5C6 /* AppDelegate.mm */,
-				70834AE71B1BCB0100E8D5C6 /* EmulatorViewController.h */,
-				70834AE81B1BCB0100E8D5C6 /* EmulatorViewController.mm */,
-				87EBC5A91B7C573300018B42 /* MainViewCell.h */,
-				87EBC5AA1B7C573300018B42 /* MainViewCell.m */,
+				876AA37A1B82413300617242 /* BackgroundLayer.h */,
+				876AA37B1B82413300617242 /* BackgroundLayer.m */,
+				87DCDB361B7F13370054D67C /* CollectionView.h */,
+				87DCDB371B7F13370054D67C /* CollectionView.m */,
 				879A687B1B94D344001D4262 /* CoverViewCell.h */,
 				879A687C1B94D344001D4262 /* CoverViewCell.m */,
+				87DCDB311B7F03260054D67C /* CoverViewController.h */,
+				87DCDB321B7F03260054D67C /* CoverViewController.m */,
+				87BF77871CBCEBD700573921 /* MainViewCell.h */,
+				87BF77881CBCEBD700573921 /* MainViewCell.m */,
+				87BF77891CBCEBD700573921 /* MainViewController.h */,
+				87BF778A1CBCEBD700573921 /* MainViewController.mm */,
+				70834AE71B1BCB0100E8D5C6 /* EmulatorViewController.h */,
+				70834AE81B1BCB0100E8D5C6 /* EmulatorViewController.mm */,
 				70AD23681B38A39000137AA0 /* GlEsView.h */,
 				70AD23651B38A2FE00137AA0 /* GlEsView.mm */,
 				704E1C4C1B3BA0B200C0ACE3 /* GSH_OpenGLiOS.cpp */,
 				704E1C4D1B3BA0B200C0ACE3 /* GSH_OpenGLiOS.h */,
+				70603E1E1B60A94400935E3C /* Images.xcassets */,
 				70834AE51B1BCB0100E8D5C6 /* Info.plist */,
 				7075D0B91B634B470010D69C /* IosUtils.cpp */,
 				7075D0BA1B634B470010D69C /* IosUtils.h */,
 				70834AEF1B1BCB9E00E8D5C6 /* LaunchScreen.xib */,
 				70834AE61B1BCB0100E8D5C6 /* main.mm */,
 				70834AF11B1BCB9E00E8D5C6 /* Main.storyboard */,
-				876AA37A1B82413300617242 /* BackgroundLayer.h */,
-				876AA37B1B82413300617242 /* BackgroundLayer.m */,
-				87DCDB311B7F03260054D67C /* CoverViewController.h */,
-				87DCDB321B7F03260054D67C /* CoverViewController.m */,
-				70287BE51B5F3A2400B53235 /* MainViewController.h */,
-				70287BE31B5F3A0300B53235 /* MainViewController.mm */,
+				7066B4C01C3F3BC9007568BB /* PreferenceDefs.h */,
 				70834CE21B1BD93100E8D5C6 /* Purei_Prefix.pch */,
+				7066B4BF1C3EB87C007568BB /* SettingsViewController.h */,
+				7066B4BC1C3EB820007568BB /* SettingsViewController.mm */,
 				874ECDA71B7DB1C1000075B6 /* SqliteDatabase.h */,
-				87DCDB361B7F13370054D67C /* CollectionView.h */,
-				87DCDB371B7F13370054D67C /* CollectionView.m */,
 				874ECDA51B7DB0F6000075B6 /* SqliteDatabase.m */,
-				70D3A86D1BDF1746005494CE /* VirtualPadButton.h */,
-				70D3A86E1BDF1746005494CE /* VirtualPadButton.mm */,
-				70D3A86F1BDF1746005494CE /* VirtualPadItem.h */,
-				70D3A8701BDF1746005494CE /* VirtualPadItem.mm */,
-				70D3A8711BDF1746005494CE /* VirtualPadStick.h */,
-				70D3A8721BDF1746005494CE /* VirtualPadStick.mm */,
-				70D3A8731BDF1746005494CE /* VirtualPadView.h */,
-				70D3A8741BDF1746005494CE /* VirtualPadView.mm */,
+				7066B4BE1C3EB838007568BB /* VirtualPad */,
 			);
 			name = ui_ios;
 			sourceTree = "<group>";
@@ -797,19 +827,18 @@
 		70834B811B1BD2CF00E8D5C6 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				8794D9951B88AF2F00B1B3A3 /* SDWebImage.framework */,
 				874ECDA91B7DB862000075B6 /* libsqlite3.dylib */,
 				874ECDE61B7E749A000075B6 /* ImageIO.framework */,
-				87C208C11B7A3F6900638BDD /* boost.a */,
 				70834B881B1BD2F500E8D5C6 /* CodeGen.xcodeproj */,
 				705342D81B78122400477EC4 /* CoreGraphics.framework */,
 				70834B821B1BD2E100E8D5C6 /* Framework.xcodeproj */,
+				8794D9B31B88B61C00B1B3A3 /* UIKit.framework */,
+				8794D9B11B88B61400B1B3A3 /* libbz2.dylib */,
+				8794D9AF1B88B60900B1B3A3 /* OpenGLES.framework */,
+				8794D9AD1B88B60100B1B3A3 /* QuartzCore.framework */,
 				70834CE01B1BD7EE00E8D5C6 /* libz.dylib */,
-				87C208B91B7A3E7500638BDD /* libbz2.dylib */,
-				87C208B51B7A3E6000638BDD /* QuartzCore.framework */,
-				87C208BB1B7A3E7A00638BDD /* UIKit.framework */,
 				87C208BD1B7A3E7E00638BDD /* GameController.framework */,
-				87C208B71B7A3E6900638BDD /* OpenGLES.framework */,
+				87BF773D1CBCD19200573921 /* boost.a */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
@@ -833,7 +862,6 @@
 		70834B941B1BD3A300E8D5C6 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				70834B951B1BD3AC00E8D5C6 /* ExternalDependencies.xcconfig */,
 				70834B961B1BD3AC00E8D5C6 /* GeneralSettings.xcconfig */,
 				70834B971B1BD3AC00E8D5C6 /* GeneralSettingsDebug.xcconfig */,
 				70834B981B1BD3AC00E8D5C6 /* GeneralSettingsRelease.xcconfig */,
@@ -974,6 +1002,8 @@
 				70834C341B1BD70700E8D5C6 /* Iop_Modload.cpp */,
 				70834C351B1BD70700E8D5C6 /* Iop_Modload.h */,
 				70834C361B1BD70700E8D5C6 /* Iop_Module.h */,
+				705AA96E1C55675000775613 /* Iop_MtapMan.cpp */,
+				705AA96F1C55675000775613 /* Iop_MtapMan.h */,
 				70834C371B1BD70700E8D5C6 /* Iop_PadMan.cpp */,
 				70834C381B1BD70700E8D5C6 /* Iop_PadMan.h */,
 				70834C391B1BD70700E8D5C6 /* Iop_RootCounters.cpp */,
@@ -1014,6 +1044,8 @@
 				70834C5C1B1BD70700E8D5C6 /* Iop_Thmsgbx.h */,
 				70834C5D1B1BD70700E8D5C6 /* Iop_Thsema.cpp */,
 				70834C5E1B1BD70700E8D5C6 /* Iop_Thsema.h */,
+				7076A7FF1C8A7D7500C6B873 /* Iop_Thvpool.cpp */,
+				7076A8001C8A7D7500C6B873 /* Iop_Thvpool.h */,
 				70834C5F1B1BD70700E8D5C6 /* Iop_Timrman.cpp */,
 				70834C601B1BD70700E8D5C6 /* Iop_Timrman.h */,
 				70834C611B1BD70700E8D5C6 /* Iop_Vblank.cpp */,
@@ -1102,6 +1134,16 @@
 			path = "../Source/ui_ios/iCade-iOS";
 			sourceTree = "<group>";
 		};
+		B5B1B4809742EB8D14085AFF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				87BF775D1CBCE18700573921 /* Foundation.framework */,
+				87BF77571CBCE11900573921 /* libSDWebImage.a */,
+				9A4BF57636C5D1376585E630 /* libPods-Play!.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1109,9 +1151,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 70834AD11B1BC70300E8D5C6 /* Build configuration list for PBXNativeTarget "Play!" */;
 			buildPhases = (
+				BD31A58F847C5F0CE82BA6E9 /* 📦 Check Pods Manifest.lock */,
 				70834AAA1B1BC70300E8D5C6 /* Sources */,
 				70834AAB1B1BC70300E8D5C6 /* Frameworks */,
 				70834AAC1B1BC70300E8D5C6 /* Resources */,
+				D92549132D91DEA25D1A64D7 /* 📦 Embed Pods Frameworks */,
+				D603599C4005E8673A342A17 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1194,7 +1239,6 @@
 				7001D6521BE54582008B6205 /* circle.png in Resources */,
 				7001D6491BE5457C008B6205 /* right.png in Resources */,
 				7001D6471BE5457C008B6205 /* left.png in Resources */,
-				874ECDF21B7E7DA4000075B6 /* Images.xcassets in Resources */,
 				70834AF41B1BCB9E00E8D5C6 /* Main.storyboard in Resources */,
 				7001D6461BE5457C008B6205 /* down.png in Resources */,
 				7001D64C1BE5457C008B6205 /* start.png in Resources */,
@@ -1212,6 +1256,54 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		BD31A58F847C5F0CE82BA6E9 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D603599C4005E8673A342A17 /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Play!/Pods-Play!-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D92549132D91DEA25D1A64D7 /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Play!/Pods-Play!-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		70834AAA1B1BC70300E8D5C6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1221,7 +1313,6 @@
 				70AD238B1B38FFBA00137AA0 /* SaveExporter.cpp in Sources */,
 				70834B5B1B1BD2C300E8D5C6 /* COP_FPU.cpp in Sources */,
 				70834BDF1B1BD6A300E8D5C6 /* Dmac_Channel.cpp in Sources */,
-				87EBC5AB1B7C573300018B42 /* MainViewCell.m in Sources */,
 				70834B5A1B1BD2C300E8D5C6 /* COP_FPU_Reflection.cpp in Sources */,
 				70834BEE1B1BD6A300E8D5C6 /* MA_EE_Reflection.cpp in Sources */,
 				70834BFC1B1BD6A300E8D5C6 /* VuBasicBlock.cpp in Sources */,
@@ -1237,6 +1328,7 @@
 				70834C8E1B1BD70700E8D5C6 /* Iop_Vblank.cpp in Sources */,
 				70834C761B1BD70700E8D5C6 /* Iop_Loadcore.cpp in Sources */,
 				70834B7F1B1BD2C300E8D5C6 /* Utils.cpp in Sources */,
+				705AA9701C55675000775613 /* Iop_MtapMan.cpp in Sources */,
 				70834CA11B1BD78D00E8D5C6 /* ISO9660.cpp in Sources */,
 				70834B5F1B1BD2C300E8D5C6 /* ELF.cpp in Sources */,
 				70834C731B1BD70700E8D5C6 /* Iop_Intrman.cpp in Sources */,
@@ -1268,9 +1360,11 @@
 				70834C0B1B1BD6E000E8D5C6 /* GSHandler.cpp in Sources */,
 				70834C091B1BD6E000E8D5C6 /* GsCachedArea.cpp in Sources */,
 				70D3A8751BDF1746005494CE /* VirtualPadButton.mm in Sources */,
+				7076A8011C8A7D7500C6B873 /* Iop_Thvpool.cpp in Sources */,
 				70834B571B1BD2C300E8D5C6 /* AppConfig.cpp in Sources */,
 				70834C851B1BD70700E8D5C6 /* Iop_Stdio.cpp in Sources */,
 				70D3A8771BDF1746005494CE /* VirtualPadStick.mm in Sources */,
+				87BF778C1CBCEBD700573921 /* MainViewController.mm in Sources */,
 				70834AEB1B1BCB0100E8D5C6 /* main.mm in Sources */,
 				874ECDA61B7DB0F6000075B6 /* SqliteDatabase.m in Sources */,
 				70834BE71B1BD6A300E8D5C6 /* IPU_DmVectorTable.cpp in Sources */,
@@ -1283,6 +1377,7 @@
 				70834C811B1BD70700E8D5C6 /* Iop_Spu.cpp in Sources */,
 				70834C7A1B1BD70700E8D5C6 /* Iop_RootCounters.cpp in Sources */,
 				70834BE31B1BD6A300E8D5C6 /* FpAddTruncate.cpp in Sources */,
+				87BF778B1CBCEBD700573921 /* MainViewCell.m in Sources */,
 				70834C7B1B1BD70700E8D5C6 /* Iop_SifCmd.cpp in Sources */,
 				704E1C531B3BA25000C0ACE3 /* GSH_OpenGL_Shader.cpp in Sources */,
 				70AD23961B39199300137AA0 /* PsuSaveImporter.cpp in Sources */,
@@ -1293,7 +1388,7 @@
 				70834B7B1B1BD2C300E8D5C6 /* RegisterStateFile.cpp in Sources */,
 				70834B631B1BD2C300E8D5C6 /* Log.cpp in Sources */,
 				70AD238C1B38FFBA00137AA0 /* SaveImporter.cpp in Sources */,
-				70287BE41B5F3A0300B53235 /* MainViewController.mm in Sources */,
+				7066B4BD1C3EB820007568BB /* SettingsViewController.mm in Sources */,
 				70834BFB1B1BD6A300E8D5C6 /* VuAnalysis.cpp in Sources */,
 				70834BF71B1BD6A300E8D5C6 /* Timer.cpp in Sources */,
 				87DCDB381B7F13370054D67C /* CollectionView.m in Sources */,
@@ -1429,7 +1524,6 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1445,6 +1539,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1464,7 +1560,6 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1478,6 +1573,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1485,53 +1582,43 @@
 		};
 		70834AD21B1BC70300E8D5C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 70834B971B1BD3AC00E8D5C6 /* GeneralSettingsDebug.xcconfig */;
+			baseConfigurationReference = 2AB2AB5CB5A4D4903F48EA33 /* Pods-Play!.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(BOOST_FRAMEWORK_PATH)",
-					"$(CODEGEN_PATH)/include",
-					"$(FRAMEWORK_PATH)/include",
-					../include,
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "$(SRCROOT)/../Source/ui_ios/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					../../Dependencies/ofxiOSBoost/libs/boost/ios,
+					/Users/loungekatt/Public/Dropbox/PlayEmulator/Dependencies/ofxiOSBoost/libs/boost/ios,
+					"$(PROJECT_DIR)/build/Release-iphoneos/SDWebImage",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.virtualapplications.play;
+				PRODUCT_NAME = "Play!";
 			};
 			name = Debug;
 		};
 		70834AD31B1BC70300E8D5C6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 70834B981B1BD3AC00E8D5C6 /* GeneralSettingsRelease.xcconfig */;
+			baseConfigurationReference = 6798F90FC4EA24B8A8B5C627 /* Pods-Play!.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(BOOST_FRAMEWORK_PATH)",
-					"$(CODEGEN_PATH)/include",
-					"$(FRAMEWORK_PATH)/include",
-					../include,
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "$(SRCROOT)/../Source/ui_ios/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					../../Dependencies/ofxiOSBoost/libs/boost/ios,
+					/Users/loungekatt/Public/Dropbox/PlayEmulator/Dependencies/ofxiOSBoost/libs/boost/ios,
+					"$(PROJECT_DIR)/build/Release-iphoneos/SDWebImage",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.virtualapplications.play;
+				PRODUCT_NAME = "Play!";
 			};
 			name = Release;
 		};

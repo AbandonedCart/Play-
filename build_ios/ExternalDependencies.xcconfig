@@ -1,3 +1,0 @@
-BOOST_FRAMEWORK_PATH = ../../boost_1_58_0
-FRAMEWORK_PATH = ../../Framework
-CODEGEN_PATH = ../../CodeGen
