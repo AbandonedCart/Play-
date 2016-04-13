@@ -65,6 +65,7 @@ enum GS_REGS
 	GS_REG_TRXDIR		= 0x53,
 	GS_REG_SIGNAL		= 0x60,
 	GS_REG_FINISH		= 0x61,
+	GS_REG_LABEL		= 0x62,
 };
 
 class CGSHandler
@@ -92,6 +93,7 @@ public:
 		GS_DISPLAY2 = 0x120000A0,
 		GS_CSR		= 0x12001000,
 		GS_IMR		= 0x12001010,
+		GS_SIGLBLID	= 0x12001080,
 	};
 
 	enum
@@ -423,9 +425,12 @@ public:
 	//Reg 0x4C/0x4D
 	struct FRAME : public convertible<uint64>
 	{
-		unsigned int	nPtr				: 16;
-		unsigned int	nWidth				: 8;
-		unsigned int	nPsm				: 8;
+		unsigned int	nPtr				: 9;
+		unsigned int	nReserved0			: 7;
+		unsigned int	nWidth				: 6;
+		unsigned int	nReserved1			: 2;
+		unsigned int	nPsm				: 6;
+		unsigned int	nReserved2			: 2;
 		unsigned int	nMask				: 32;
 		uint32			GetBasePtr() const	{ return nPtr * 8192; }
 		uint32			GetWidth() const	{ return nWidth * 64; }
@@ -492,12 +497,31 @@ public:
 	};
 	static_assert(sizeof(TRXREG) == sizeof(uint64), "Size of TRXREG struct must be 8 bytes.");
 
+	//Reg 0x60
+	struct SIGNAL : public convertible<uint64>
+	{
+		unsigned int	id				: 32;
+		unsigned int	idmsk			: 32;
+	};
+	static_assert(sizeof(SIGNAL) == sizeof(uint64), "Size of SIGNAL struct must be 8 bytes.");
+
+	//Reg 0x62
+	struct LABEL : public convertible<uint64>
+	{
+		unsigned int	id				: 32;
+		unsigned int	idmsk			: 32;
+	};
+	static_assert(sizeof(LABEL) == sizeof(uint64), "Size of LABEL struct must be 8 bytes.");
+
 	typedef std::pair<uint8, uint64> RegisterWrite;
 	typedef std::vector<RegisterWrite> RegisterWriteList;
 	typedef std::function<CGSHandler* (void)> FactoryFunction;
 
 											CGSHandler();
 	virtual									~CGSHandler();
+
+	static void								RegisterPreferences();
+	void									NotifyPreferencesChanged();
 
 	void									Reset();
 	void									SetPresentationParams(const PRESENTATION_PARAMS&);
@@ -527,9 +551,10 @@ public:
 	virtual void							SetCrt(bool, unsigned int, bool);
 	void									Initialize();
 	void									Release();
-	virtual void							ProcessImageTransfer() = 0;
-	virtual void							ProcessClutTransfer(uint32, uint32) = 0;
+	virtual void							ProcessHostToLocalTransfer() = 0;
+	virtual void							ProcessLocalToHostTransfer() = 0;
 	virtual void							ProcessLocalToLocalTransfer() = 0;
+	virtual void							ProcessClutTransfer(uint32, uint32) = 0;
 	void									Flip(bool showOnly = false);
 	virtual void							ReadFramebuffer(uint32, uint32, void*) = 0;
 	
@@ -656,6 +681,13 @@ protected:
 	};
 	static_assert(sizeof(DISPLAY) == sizeof(uint64), "Size of DISPLAY struct must be 8 bytes.");
 
+	struct SIGLBLID : public convertible<uint64>
+	{
+		unsigned int	sigid		: 32;
+		unsigned int	lblid		: 32;
+	};
+	static_assert(sizeof(SIGLBLID) == sizeof(uint64), "Size of SIGLBLID struct must be 8 bytes.");
+
 	struct TRXCONTEXT
 	{
 		uint32			nSize;
@@ -677,6 +709,7 @@ protected:
 	virtual void							ReleaseImpl() = 0;
 	void									ResetBase();
 	virtual void							ResetImpl();
+	virtual void							NotifyPreferencesChangedImpl();
 	virtual void							FlipImpl();
 	void									MarkNewFrame();
 	virtual void							WriteRegisterImpl(uint8, uint64);
@@ -709,6 +742,7 @@ protected:
 	DELAYED_REGISTER						m_nDISPLAY2;		//0x120000A0
 	uint64									m_nCSR;				//0x12001000
 	uint64									m_nIMR;				//0x12001010
+	uint64									m_nSIGLBLID;		//0x12001080
 
 	PRESENTATION_PARAMS						m_presentationParams;
 

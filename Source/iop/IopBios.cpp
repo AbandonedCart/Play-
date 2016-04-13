@@ -18,15 +18,18 @@
 #endif
 
 #include "Iop_SifManNull.h"
+#include "Iop_SifModuleProvider.h"
 #include "Iop_Sysclib.h"
 #include "Iop_Loadcore.h"
 #include "Iop_Thbase.h"
 #include "Iop_Thsema.h"
+#include "Iop_Thvpool.h"
 #include "Iop_Thmsgbx.h"
 #include "Iop_Thevent.h"
 #include "Iop_Timrman.h"
 #include "Iop_Intrman.h"
 #include "Iop_Vblank.h"
+#include "Iop_Dynamic.h"
 
 #define LOGNAME "iop_bios"
 
@@ -50,9 +53,11 @@
 #define BIOS_INTRHANDLER_SIZE				(sizeof(CIopBios::INTRHANDLER) * CIopBios::MAX_INTRHANDLER)
 #define BIOS_MESSAGEBOX_BASE				(BIOS_INTRHANDLER_BASE + BIOS_INTRHANDLER_SIZE)
 #define BIOS_MESSAGEBOX_SIZE				(sizeof(CIopBios::MESSAGEBOX) * CIopBios::MAX_MESSAGEBOX)
-#define BIOS_HEAPBLOCK_BASE					(BIOS_MESSAGEBOX_BASE + BIOS_MESSAGEBOX_SIZE)
-#define BIOS_HEAPBLOCK_SIZE					(sizeof(Iop::CSysmem::BLOCK) * Iop::CSysmem::MAX_BLOCKS)
-#define BIOS_MODULESTARTREQUEST_BASE		(BIOS_HEAPBLOCK_BASE + BIOS_HEAPBLOCK_SIZE)
+#define BIOS_VPL_BASE						(BIOS_MESSAGEBOX_BASE + BIOS_MESSAGEBOX_SIZE)
+#define BIOS_VPL_SIZE						(sizeof(CIopBios::VPL) * CIopBios::MAX_VPL)
+#define BIOS_MEMORYBLOCK_BASE				(BIOS_VPL_BASE + BIOS_VPL_SIZE)
+#define BIOS_MEMORYBLOCK_SIZE				(sizeof(Iop::MEMORYBLOCK) * CIopBios::MAX_MEMORYBLOCK)
+#define BIOS_MODULESTARTREQUEST_BASE		(BIOS_MEMORYBLOCK_BASE + BIOS_MEMORYBLOCK_SIZE)
 #define BIOS_MODULESTARTREQUEST_SIZE		(sizeof(CIopBios::MODULESTARTREQUEST) * CIopBios::MAX_MODULESTARTREQUEST)
 #define BIOS_LOADEDMODULE_BASE				(BIOS_MODULESTARTREQUEST_BASE + BIOS_MODULESTARTREQUEST_SIZE)
 #define BIOS_LOADEDMODULE_SIZE				(sizeof(CIopBios::LOADEDMODULE) * CIopBios::MAX_LOADEDMODULE)
@@ -69,22 +74,11 @@
 //This is the space needed to preserve at most four arguments in the stack frame (as per MIPS calling convention)
 #define STACK_FRAME_RESERVE_SIZE		0x10
 
-CIopBios::CIopBios(CMIPS& cpu, uint8* ram, uint32 ramSize) 
+CIopBios::CIopBios(CMIPS& cpu, uint8* ram, uint32 ramSize, uint8* spr)
 : m_cpu(cpu)
 , m_ram(ram)
 , m_ramSize(ramSize)
-, m_sifMan(nullptr)
-, m_sifCmd(nullptr)
-, m_stdio(nullptr)
-, m_sysmem(nullptr)
-, m_ioman(nullptr)
-, m_modload(nullptr)
-, m_cdvdman(nullptr)
-, m_loadcore(nullptr)
-#ifdef _IOP_EMULATE_MODULES
-, m_padman(nullptr)
-, m_cdvdfsv(nullptr)
-#endif
+, m_spr(spr)
 , m_threadFinishAddress(0)
 , m_returnFromExceptionAddress(0)
 , m_idleFunctionAddress(0)
@@ -92,10 +86,12 @@ CIopBios::CIopBios(CMIPS& cpu, uint8* ram, uint32 ramSize)
 , m_moduleStarterThreadId(0)
 , m_alarmThreadProcAddress(0)
 , m_threads(reinterpret_cast<THREAD*>(&m_ram[BIOS_THREADS_BASE]), 1, MAX_THREAD)
+, m_memoryBlocks(reinterpret_cast<Iop::MEMORYBLOCK*>(&ram[BIOS_MEMORYBLOCK_BASE]), 1, MAX_MEMORYBLOCK)
 , m_semaphores(reinterpret_cast<SEMAPHORE*>(&m_ram[BIOS_SEMAPHORES_BASE]), 1, MAX_SEMAPHORE)
 , m_eventFlags(reinterpret_cast<EVENTFLAG*>(&m_ram[BIOS_EVENTFLAGS_BASE]), 1, MAX_EVENTFLAG)
 , m_intrHandlers(reinterpret_cast<INTRHANDLER*>(&m_ram[BIOS_INTRHANDLER_BASE]), 1, MAX_INTRHANDLER)
 , m_messageBoxes(reinterpret_cast<MESSAGEBOX*>(&m_ram[BIOS_MESSAGEBOX_BASE]), 1, MAX_MESSAGEBOX)
+, m_vpls(reinterpret_cast<VPL*>(&m_ram[BIOS_VPL_BASE]), 1, MAX_VPL)
 , m_loadedModules(reinterpret_cast<LOADEDMODULE*>(&m_ram[BIOS_LOADEDMODULE_BASE]), 1, MAX_LOADEDMODULE)
 , m_currentThreadId(reinterpret_cast<uint32*>(m_ram + BIOS_CURRENT_THREAD_ID_BASE))
 {
@@ -107,7 +103,7 @@ CIopBios::~CIopBios()
 	DeleteModules();
 }
 
-void CIopBios::Reset(Iop::CSifMan* sifMan)
+void CIopBios::Reset(const Iop::SifManPtr& sifMan)
 {
 	//Assemble handlers
 	{
@@ -136,9 +132,9 @@ void CIopBios::Reset(Iop::CSifMan* sifMan)
 
 	DeleteModules();
 
-	if(sifMan == NULL)
+	if(!sifMan)
 	{
-		m_sifMan = new Iop::CSifManNull();
+		m_sifMan = std::make_shared<Iop::CSifManNull>();
 	}
 	else
 	{
@@ -147,78 +143,81 @@ void CIopBios::Reset(Iop::CSifMan* sifMan)
 
 	//Register built-in modules
 	{
-		m_ioman = new Iop::CIoman(m_ram);
+		m_ioman = std::make_shared<Iop::CIoman>(m_ram);
 		RegisterModule(m_ioman);
 	}
 	{
-		m_stdio = new Iop::CStdio(m_ram, *m_ioman);
+		m_stdio = std::make_shared<Iop::CStdio>(m_ram, *m_ioman);
 		RegisterModule(m_stdio);
 	}
 	{
-		m_sysmem = new Iop::CSysmem(m_ram, CONTROL_BLOCK_END, m_ramSize, BIOS_HEAPBLOCK_BASE, *m_stdio, *m_ioman, *m_sifMan);
+		m_sysmem = std::make_shared<Iop::CSysmem>(m_ram, CONTROL_BLOCK_END, m_ramSize, m_memoryBlocks, *m_stdio, *m_ioman, *m_sifMan);
 		RegisterModule(m_sysmem);
 	}
 	{
-		m_modload = new Iop::CModload(*this, m_ram);
+		m_modload = std::make_shared<Iop::CModload>(*this, m_ram);
 		RegisterModule(m_modload);
 	}
 	{
-		RegisterModule(new Iop::CSysclib(m_ram, *m_stdio));
+		RegisterModule(std::make_shared<Iop::CSysclib>(m_ram, m_spr, *m_stdio));
 	}
 	{
-		m_loadcore = new Iop::CLoadcore(*this, m_ram, *m_sifMan);
+		m_loadcore = std::make_shared<Iop::CLoadcore>(*this, m_ram, *m_sifMan);
 		RegisterModule(m_loadcore);
 	}
 	{
 		m_libsd = std::make_shared<Iop::CLibSd>();
 	}
 	{
-		RegisterModule(new Iop::CThbase(*this, m_ram));
+		RegisterModule(std::make_shared<Iop::CThbase>(*this, m_ram));
 	}
 	{
-		RegisterModule(new Iop::CThmsgbx(*this, m_ram));
+		RegisterModule(std::make_shared<Iop::CThmsgbx>(*this, m_ram));
 	}
 	{
-		RegisterModule(new Iop::CThsema(*this, m_ram));
+		RegisterModule(std::make_shared<Iop::CThsema>(*this, m_ram));
 	}
 	{
-		RegisterModule(new Iop::CThevent(*this, m_ram));
+		RegisterModule(std::make_shared<Iop::CThvpool>(*this));
 	}
 	{
-		RegisterModule(new Iop::CTimrman(*this));
+		RegisterModule(std::make_shared<Iop::CThevent>(*this, m_ram));
 	}
 	{
-		RegisterModule(new Iop::CIntrman(*this, m_ram));
+		RegisterModule(std::make_shared<Iop::CTimrman>(*this));
 	}
 	{
-		RegisterModule(new Iop::CVblank(*this));
+		RegisterModule(std::make_shared<Iop::CIntrman>(*this, m_ram));
 	}
 	{
-		m_cdvdman = new Iop::CCdvdman(*this, m_ram);
+		RegisterModule(std::make_shared<Iop::CVblank>(*this));
+	}
+	{
+		m_cdvdman = std::make_shared<Iop::CCdvdman>(*this, m_ram);
 		RegisterModule(m_cdvdman);
 	}
 	{
 		RegisterModule(m_sifMan);
 	}
 	{
-		m_sifCmd = new Iop::CSifCmd(*this, *m_sifMan, *m_sysmem, m_ram);
+		m_sifCmd = std::make_shared<Iop::CSifCmd>(*this, *m_sifMan, *m_sysmem, m_ram);
 		RegisterModule(m_sifCmd);
 	}
 #ifdef _IOP_EMULATE_MODULES
 	{
-		m_fileIo = new Iop::CFileIo(*m_sifMan, *m_ioman);
+		m_fileIo = std::make_shared<Iop::CFileIo>(*m_sifMan, *m_ioman);
 		RegisterModule(m_fileIo);
 	}
 	{
-		m_cdvdfsv = new Iop::CCdvdfsv(*m_sifMan, m_ram);
+		m_cdvdfsv = std::make_shared<Iop::CCdvdfsv>(*m_sifMan, *m_cdvdman, m_ram);
 		RegisterModule(m_cdvdfsv);
 	}
 	{
-		RegisterModule(new Iop::CMcServ(*m_sifMan));
+		RegisterModule(std::make_shared<Iop::CMcServ>(*m_sifMan));
 	}
 	{
-		m_padman = new Iop::CPadMan(*m_sifMan);
-		RegisterModule(m_padman);
+		m_padman = std::make_shared<Iop::CPadMan>();
+		m_mtapman = std::make_shared<Iop::CMtapMan>();
 	}
 #endif
 
@@ -265,42 +264,62 @@ void CIopBios::SaveState(Framework::CZipArchiveWriter& archive)
 {
 	CStructCollectionStateFile* modulesFile = new CStructCollectionStateFile(STATE_MODULES);
 	{
-		for(DynamicIopModuleListType::iterator moduleIterator(m_dynamicModules.begin());
-			moduleIterator != m_dynamicModules.end(); moduleIterator++)
+		for(const auto& modulePair : m_modules)
 		{
-			Iop::CDynamic* module(*moduleIterator);
-			CStructFile moduleStruct;
+			if(auto dynamicModule = std::dynamic_pointer_cast<Iop::CDynamic>(modulePair.second))
 			{
-				uint32 importTableAddress = reinterpret_cast<uint8*>(module->GetExportTable()) - m_ram;
-				moduleStruct.SetRegister32(STATE_MODULE_IMPORT_TABLE_ADDRESS, importTableAddress); 
+				CStructFile moduleStruct;
+				{
+					uint32 importTableAddress = reinterpret_cast<uint8*>(dynamicModule->GetExportTable()) - m_ram;
+					moduleStruct.SetRegister32(STATE_MODULE_IMPORT_TABLE_ADDRESS, importTableAddress); 
+				}
+				modulesFile->InsertStruct(dynamicModule->GetId().c_str(), moduleStruct);
 			}
-			modulesFile->InsertStruct(module->GetId().c_str(), moduleStruct);
 		}
 	}
 	archive.InsertFile(modulesFile);
 
 	m_sifCmd->SaveState(archive);
 	m_cdvdman->SaveState(archive);
+#ifdef _IOP_EMULATE_MODULES
+	m_fileIo->SaveState(archive);
+#endif
 }
 
 void CIopBios::LoadState(Framework::CZipArchiveReader& archive)
 {
-	ClearDynamicModules();
+	//Remove all dynamic modules
+	for(auto modulePairIterator = m_modules.begin(); 
+		modulePairIterator != m_modules.end();)
+	{
+		if(dynamic_cast<Iop::CDynamic*>(modulePairIterator->second.get()) != nullptr)
+		{
+			modulePairIterator = m_modules.erase(modulePairIterator);
+		}
+		else
+		{
+			modulePairIterator++;
+		}
+	}
 
 	CStructCollectionStateFile modulesFile(*archive.BeginReadFile(STATE_MODULES));
 	{
-		for(CStructCollectionStateFile::StructIterator structIterator(modulesFile.GetStructBegin());
+		for(auto structIterator(modulesFile.GetStructBegin()); 
 			structIterator != modulesFile.GetStructEnd(); structIterator++)
 		{
 			const CStructFile& structFile(structIterator->second);
 			uint32 importTableAddress = structFile.GetRegister32(STATE_MODULE_IMPORT_TABLE_ADDRESS);
-			Iop::CDynamic* module = new Iop::CDynamic(reinterpret_cast<uint32*>(m_ram + importTableAddress));
-			RegisterDynamicModule(module);
+			auto module = std::make_shared<Iop::CDynamic>(reinterpret_cast<uint32*>(m_ram + importTableAddress));
+			bool result = RegisterModule(module);
+			assert(result);
 		}
 	}
 
 	m_sifCmd->LoadState(archive);
 	m_cdvdman->LoadState(archive);
+#ifdef _IOP_EMULATE_MODULES
+	m_fileIo->LoadState(archive);
+#endif
 
 #ifdef DEBUGGER_INCLUDED
 	m_cpu.m_analysis->Clear();
@@ -510,6 +529,20 @@ void CIopBios::FinishModuleStart()
 
 int32 CIopBios::LoadModule(const char* path)
 {
+#ifdef _IOP_EMULATE_MODULES
+	//HACK: This is needed to make 'doom.elf' read input properly
+	if(
+		!strcmp(path, "rom0:XSIO2MAN") || 
+		!strcmp(path, "rom0:XPADMAN")
+		)
+	{
+		return LoadHleModule(m_padman);
+	}
+	if(!strcmp(path, "rom0:XMTAPMAN"))
+	{
+		return LoadHleModule(m_mtapman);
+	}
+#endif
 	uint32 handle = m_ioman->Open(Iop::Ioman::CDevice::OPEN_FLAG_RDONLY, path);
 	if(handle & 0x80000000)
 	{
@@ -615,6 +648,11 @@ int32 CIopBios::StartModule(uint32 loadedModuleId, const char* path, const char*
 	{
 		return -1;
 	}
+	if(loadedModule->state == MODULE_STATE::HLE)
+	{
+		//HLE modules don't need to be started
+		return loadedModuleId;
+	}
 	assert(loadedModule->state == MODULE_STATE::STOPPED);
 	RequestModuleStart(false, loadedModuleId, path, args, argsLength);
 	return loadedModuleId;
@@ -643,6 +681,16 @@ int32 CIopBios::StopModule(uint32 loadedModuleId)
 	}
 	RequestModuleStart(true, loadedModuleId, "other", nullptr, 0);
 	return loadedModuleId;
+}
+
+bool CIopBios::IsModuleHle(uint32 loadedModuleId) const
+{
+	auto loadedModule = m_loadedModules[loadedModuleId];
+	if(!loadedModule)
+	{
+		return false;
+	}
+	return (loadedModule->state == MODULE_STATE::HLE);
 }
 
 int32 CIopBios::SearchModuleByName(const char* moduleName) const
@@ -918,6 +966,11 @@ uint32 CIopBios::TerminateThread(uint32 threadId)
 #endif
 
 	assert(threadId != m_currentThreadId);
+	if(threadId == m_currentThreadId)
+	{
+		return KERNEL_RESULT_ERROR_ILLEGAL_THID;
+	}
+
 	auto thread = GetThread(threadId);
 	assert(thread != nullptr);
 	if(thread == nullptr)
@@ -1368,7 +1421,8 @@ void CIopBios::NotifyVBlankEnd()
 		}
 	}
 #ifdef _IOP_EMULATE_MODULES
-	m_cdvdfsv->ProcessCommands(m_sifMan);
+	m_cdvdfsv->ProcessCommands(m_sifMan.get());
+	m_fileIo->ProcessCommands();
 #endif
 }
 
@@ -1896,31 +1950,244 @@ uint32 CIopBios::ReferMessageBoxStatus(uint32 boxId, uint32 statusPtr)
 	return KERNEL_RESULT_OK;
 }
 
+uint32 CIopBios::CreateVpl(uint32 paramPtr)
+{
+	auto param = reinterpret_cast<VPL_PARAM*>(m_ram + paramPtr);
+	if((param->attr & ~VPL_ATTR_VALID_MASK) != 0)
+	{
+		return KERNEL_RESULT_ERROR_ILLEGAL_ATTR;
+	}
+
+	auto vplId = m_vpls.Allocate();
+	assert(vplId != VplList::INVALID_ID);
+	if(vplId == VplList::INVALID_ID)
+	{
+		return -1;
+	}
+
+	auto headBlockId = m_memoryBlocks.Allocate();
+	assert(headBlockId != MemoryBlockList::INVALID_ID);
+	if(headBlockId == MemoryBlockList::INVALID_ID)
+	{
+		m_vpls.Free(vplId);
+		return -1;
+	}
+
+	uint32 poolPtr = m_sysmem->AllocateMemory(param->size, 0, 0);
+	if(poolPtr == 0)
+	{
+		//This seems to work on actual hardware (maybe fixed in later revisions)
+		m_memoryBlocks.Free(headBlockId);
+		m_vpls.Free(vplId);
+		return KERNEL_RESULT_ERROR_NO_MEMORY;
+	}
+
+	auto vpl = m_vpls[vplId];
+	vpl->attr        = param->attr;
+	vpl->option      = param->option;
+	vpl->poolPtr     = poolPtr;
+	vpl->size        = param->size;
+	vpl->headBlockId = headBlockId;
+
+	auto headBlock = m_memoryBlocks[headBlockId];
+	headBlock->nextBlockId = MemoryBlockList::INVALID_ID;
+	headBlock->address     = vpl->size;
+	headBlock->size        = 0;
+
+	return vplId;
+}
+
+uint32 CIopBios::DeleteVpl(uint32 vplId)
+{
+	auto vpl = m_vpls[vplId];
+	if(!vpl)
+	{
+		return KERNEL_RESULT_ERROR_UNKNOWN_VPLID;
+	}
+
+	m_sysmem->FreeMemory(vpl->poolPtr);
+	
+	//Free blocks
+	auto nextBlockId = vpl->headBlockId;
+	auto nextBlock = m_memoryBlocks[nextBlockId];
+	while(nextBlock != nullptr)
+	{
+		uint32 currentBlockId = nextBlockId;
+		nextBlockId = nextBlock->nextBlockId;
+		nextBlock = m_memoryBlocks[nextBlockId];
+		m_memoryBlocks.Free(currentBlockId);
+	}
+	
+	m_vpls.Free(vplId);
+
+	return 0;
+}
+
+uint32 CIopBios::pAllocateVpl(uint32 vplId, uint32 size)
+{
+	auto vpl = m_vpls[vplId];
+	if(!vpl)
+	{
+		return KERNEL_RESULT_ERROR_UNKNOWN_VPLID;
+	}
+
+	//Aligned to 8 bytes
+	int32 allocSize = (size + 7) & ~0x07;
+	if(allocSize < 0)
+	{
+		return KERNEL_RESULT_ERROR_NO_MEMORY;
+	}
+
+	uint32 freeSize = GetVplFreeSize(vplId);
+	if(allocSize > freeSize)
+	{
+		return KERNEL_RESULT_ERROR_NO_MEMORY;
+	}
+
+	uint32 begin = 0;
+	auto nextBlockId = &vpl->headBlockId;
+	auto nextBlock = m_memoryBlocks[*nextBlockId];
+	while(nextBlock != nullptr)
+	{
+		uint32 end = nextBlock->address;
+		if((end - begin) >= allocSize)
+		{
+			break;
+		}
+		begin = nextBlock->address + nextBlock->size;
+		nextBlockId = &nextBlock->nextBlockId;
+		nextBlock = m_memoryBlocks[*nextBlockId];
+	}
+
+	if(nextBlock != nullptr)
+	{
+		uint32 newBlockId = m_memoryBlocks.Allocate();
+		assert(newBlockId != MemoryBlockList::INVALID_ID);
+		if(newBlockId == MemoryBlockList::INVALID_ID)
+		{
+			return -1;
+		}
+		auto newBlock = m_memoryBlocks[newBlockId];
+		newBlock->address     = begin;
+		newBlock->size        = allocSize;
+		newBlock->nextBlockId = *nextBlockId;
+		*nextBlockId = newBlockId;
+		return begin + vpl->poolPtr;
+	}
+
+	return KERNEL_RESULT_ERROR_ILLEGAL_MEMSIZE;
+}
+
+uint32 CIopBios::FreeVpl(uint32 vplId, uint32 ptr)
+{
+	auto vpl = m_vpls[vplId];
+	if(!vpl)
+	{
+		return KERNEL_RESULT_ERROR_UNKNOWN_VPLID;
+	}
+
+	ptr -= vpl->poolPtr;
+	//Search for block pointing at the address
+	auto nextBlockId = &vpl->headBlockId;
+	auto nextBlock = m_memoryBlocks[*nextBlockId];
+	while(nextBlock != nullptr)
+	{
+		if(nextBlock->address == ptr)
+		{
+			break;
+		}
+		nextBlockId = &nextBlock->nextBlockId;
+		nextBlock = m_memoryBlocks[*nextBlockId];
+	}
+
+	if(nextBlock != nullptr)
+	{
+		m_memoryBlocks.Free(*nextBlockId);
+		*nextBlockId = nextBlock->nextBlockId;
+	}
+	else
+	{
+		return -1;
+	}
+
+	return KERNEL_RESULT_OK;
+}
+
+uint32 CIopBios::ReferVplStatus(uint32 vplId, uint32 statPtr)
+{
+	auto vpl = m_vpls[vplId];
+	if(!vpl)
+	{
+		return KERNEL_RESULT_ERROR_UNKNOWN_VPLID;
+	}
+
+	uint32 size = vpl->size - 40;
+	uint32 freeSize = GetVplFreeSize(vplId);
+
+	auto stat = reinterpret_cast<VPL_STATUS*>(m_ram + statPtr);
+	stat->attr     = vpl->attr;
+	stat->option   = vpl->option;
+	stat->size     = size;
+	stat->freeSize = freeSize;
+
+	return 0;
+}
+
+uint32 CIopBios::GetVplFreeSize(uint32 vplId)
+{
+	auto vpl = m_vpls[vplId];
+	assert(vpl != nullptr);
+	if(!vpl)
+	{
+		return 0;
+	}
+
+	uint32 size = vpl->size - 40;
+
+	uint32 freeSize = size;
+	auto nextBlockId = vpl->headBlockId;
+	auto nextBlock = m_memoryBlocks[nextBlockId];
+	while(nextBlock != nullptr)
+	{
+		if(nextBlock->nextBlockId == MemoryBlockList::INVALID_ID)
+		{
+			assert(nextBlock->address == vpl->size);
+			break;
+		}
+		freeSize -= nextBlock->size;
+		freeSize -= 8;
+		nextBlockId = nextBlock->nextBlockId;
+		nextBlock = m_memoryBlocks[nextBlockId];
+	}
+
+	return freeSize;
+}
+
 Iop::CIoman* CIopBios::GetIoman()
 {
-	return m_ioman;
+	return m_ioman.get();
 }
 
 Iop::CCdvdman* CIopBios::GetCdvdman()
 {
-	return m_cdvdman;
+	return m_cdvdman.get();
 }
 
 Iop::CLoadcore* CIopBios::GetLoadcore()
 {
-	return m_loadcore;
+	return m_loadcore.get();
 }
 
 #ifdef _IOP_EMULATE_MODULES
 
 Iop::CPadMan* CIopBios::GetPadman()
 {
-	return m_padman;
+	return m_padman.get();
 }
 
 Iop::CCdvdfsv* CIopBios::GetCdvdfsv()
 {
-	return m_cdvdfsv;
+	return m_cdvdfsv.get();
 }
 
 #endif
@@ -2221,25 +2488,46 @@ void CIopBios::ReturnFromException()
 
 void CIopBios::DeleteModules()
 {
-	while(m_modules.size() != 0)
-	{
-		delete m_modules.begin()->second;
-		m_modules.erase(m_modules.begin());
-	}
-	m_dynamicModules.clear();
+	m_modules.clear();
 
+	m_sifCmd.reset();
+	m_sifMan.reset();
 	m_libsd.reset();
-
-	m_sifMan = NULL;
-	m_stdio = NULL;
-	m_ioman = NULL;
-	m_sysmem = NULL;
-	m_modload = NULL;
-	m_sysmem = NULL;
+	m_stdio.reset();
+	m_ioman.reset();
+	m_sysmem.reset();
+	m_modload.reset();
 #ifdef _IOP_EMULATE_MODULES
-	m_padman = NULL;
-	m_cdvdfsv = NULL;
+	m_padman.reset();
+	m_cdvdfsv.reset();
+	m_fileIo.reset();
 #endif
+}
+
+int32 CIopBios::LoadHleModule(const Iop::ModulePtr& module)
+{
+	auto loadedModuleId = SearchModuleByName(module->GetId().c_str());
+	if(loadedModuleId != -1)
+	{
+		return loadedModuleId;
+	}
+
+	loadedModuleId = m_loadedModules.Allocate();
+	assert(loadedModuleId != -1);
+	if(loadedModuleId == -1) return -1;
+
+	auto loadedModule = m_loadedModules[loadedModuleId];
+	strncpy(loadedModule->name, module->GetId().c_str(), LOADEDMODULE::MAX_NAME_SIZE);
+	loadedModule->state = MODULE_STATE::HLE;
+
+	//Register entries as if the module initialized itself
+	RegisterModule(module);
+	if(auto sifModuleProvider = std::dynamic_pointer_cast<Iop::CSifModuleProvider>(module))
+	{
+		sifModuleProvider->RegisterSifModules(*m_sifMan);
+	}
+
+	return loadedModuleId;
 }
 
 std::string CIopBios::ReadModuleName(uint32 address)
@@ -2259,32 +2547,12 @@ std::string CIopBios::ReadModuleName(uint32 address)
 	return moduleName;
 }
 
-void CIopBios::RegisterModule(Iop::CModule* module)
+bool CIopBios::RegisterModule(const Iop::ModulePtr& module)
 {
+	bool registered = (m_modules.find(module->GetId()) != std::end(m_modules));
+	if(registered) return false;
 	m_modules[module->GetId()] = module;
-}
-
-void CIopBios::ClearDynamicModules()
-{
-	for(DynamicIopModuleListType::iterator dynModuleIterator(m_dynamicModules.begin());
-		dynModuleIterator != m_dynamicModules.end(); dynModuleIterator++)
-	{
-		IopModuleMapType::iterator module(m_modules.find((*dynModuleIterator)->GetId()));
-		assert(module != m_modules.end());
-		if(module != m_modules.end())
-		{
-			delete module->second;
-			m_modules.erase(module);
-		}
-	}
-
-	m_dynamicModules.clear();
-}
-
-void CIopBios::RegisterDynamicModule(Iop::CDynamic* dynamicModule)
-{
-	m_dynamicModules.push_back(dynamicModule);
-	RegisterModule(dynamicModule);
+	return true;
 }
 
 uint32 CIopBios::LoadExecutable(CELF& elf, ExecutableRange& executableRange)
@@ -2444,8 +2712,8 @@ void CIopBios::TriggerCallback(uint32 address, uint32 arg0, uint32 arg1)
 		callbackThreadId = CreateThread(address, DEFAULT_PRIORITY, DEFAULT_STACKSIZE, 0);
 	}
 
-	ChangeThreadPriority(callbackThreadId, 1);
 	StartThread(callbackThreadId, 0);
+	ChangeThreadPriority(callbackThreadId, 1);
 
 	auto thread = GetThread(callbackThreadId);
 	thread->context.gpr[CMIPS::A0] = arg0;

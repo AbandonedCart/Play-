@@ -1869,15 +1869,33 @@ void CPS2OS::sc_ReferThreadStatus()
 		break;
 	}
 
+	uint32 waitType = 0;
+	switch(thread->status)
+	{
+	case THREAD_SLEEPING:
+	case THREAD_SUSPENDED_SLEEPING:
+		waitType = 1;
+		break;
+	case THREAD_WAITING:
+	case THREAD_SUSPENDED_WAITING:
+		waitType = 2;
+		break;
+	default:
+		waitType = 0;
+		break;
+	}
+
 	if(statusPtr != 0)
 	{
-		auto threadParam = reinterpret_cast<THREADPARAM*>(GetStructPtr(statusPtr));
+		auto status = reinterpret_cast<THREADSTATUS*>(GetStructPtr(statusPtr));
 
-		threadParam->status				= ret;
-		threadParam->initPriority		= thread->initPriority;
-		threadParam->currPriority		= thread->currPriority;
-		threadParam->stackBase			= thread->stackBase;
-		threadParam->stackSize			= thread->stackSize;
+		status->status          = ret;
+		status->initPriority    = thread->initPriority;
+		status->currPriority    = thread->currPriority;
+		status->stackBase       = thread->stackBase;
+		status->stackSize       = thread->stackSize;
+		status->waitType        = waitType;
+		status->wakeupCount     = thread->wakeUpCount;
 	}
 
 	m_ee.m_State.nGPR[SC_RETURN].nD0 = ret;
@@ -1886,6 +1904,8 @@ void CPS2OS::sc_ReferThreadStatus()
 //32
 void CPS2OS::sc_SleepThread()
 {
+	m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(m_currentThreadId);
+
 	auto thread = m_threads[m_currentThreadId];
 	if(thread->wakeUpCount == 0)
 	{
@@ -1906,12 +1926,27 @@ void CPS2OS::sc_WakeupThread()
 	uint32 id		= m_ee.m_State.nGPR[SC_PARAM0].nV[0];
 	bool isInt		= m_ee.m_State.nGPR[3].nV[0] == 0x34;
 
+	if((id == 0) || (id == m_currentThreadId))
+	{
+		//Can't wakeup a thread that's already running
+		m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(-1);
+		return;
+	}
+
 	auto thread = m_threads[id];
 	if(!thread)
 	{
 		m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(-1);
 		return;
 	}
+
+	if(thread->status == THREAD_ZOMBIE)
+	{
+		m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(-1);
+		return;
+	}
+
+	m_ee.m_State.nGPR[SC_RETURN].nD0 = static_cast<int32>(id);
 
 	if(
 		(thread->status == THREAD_SLEEPING) || 

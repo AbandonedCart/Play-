@@ -1,9 +1,10 @@
 #import "ApplicationDelegate.h"
-#import "VfsManagerController.h"
+#import "PreferencesWindowController.h"
 #import "GSH_OpenGLMacOSX.h"
 #import "PH_HidMacOSX.h"
 #import "Globals.h"
 #import "../ee/PS2OS.h"
+#import "../ScopedVmPauser.h"
 #import "../PS2VM_Preferences.h"
 #import "../AppConfig.h"
 
@@ -18,6 +19,7 @@
 	[outputWindowController.window center];
 	[outputWindowController showWindow: nil];
 	[outputWindowController setDelegate: self];
+	[self setupOpenGlContext];
 	
 	NSOpenGLContext* context = [outputWindowController.openGlView openGLContext];
 	void* lowLevelContext = [context CGLContextObj];
@@ -53,6 +55,30 @@
 -(void)applicationWillTerminate: (NSNotification*)notification
 {
 	g_virtualMachine->Pause();
+}
+
+-(void)setupOpenGlContext
+{
+	NSOpenGLPixelFormatAttribute pixelFormatAttributes[] =
+	{
+		NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
+		NSOpenGLPFADoubleBuffer, YES,
+		NSOpenGLPFADepthSize, 24,
+		0
+	};
+		
+	NSOpenGLPixelFormat* pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes: pixelFormatAttributes] autorelease];
+	NSOpenGLContext* context = [[[NSOpenGLContext alloc] initWithFormat: pixelFormat shareContext:nil] autorelease];
+	[outputWindowController.openGlView setPixelFormat: pixelFormat];
+	[outputWindowController.openGlView setOpenGLContext: context];
+}
+
+-(IBAction)showPreferences: (id)sender
+{
+	CScopedVmPauser vmPaused(*g_virtualMachine);
+	[[PreferencesWindowController defaultController] show];
+	auto gs = g_virtualMachine->GetGSHandler();
+	if(gs != nullptr) gs->NotifyPreferencesChanged();
 }
 
 -(IBAction)bootElfMenuSelected: (id)sender
@@ -138,11 +164,6 @@
 	{
 		NSRunCriticalAlertPanel(@"Error occured while trying to load state.", @"", NULL, NULL, NULL);
 	}
-}
-
--(IBAction)vfsManagerMenuSelected: (id)sender
-{
-	[[VfsManagerController defaultController] showManager];
 }
 
 -(void)bootFromElf : (NSString*)fileName

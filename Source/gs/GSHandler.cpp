@@ -46,6 +46,7 @@
 #define STATE_PRIVREGS_DISPLAY2			("DISPLAY2")
 #define STATE_PRIVREGS_CSR				("CSR")
 #define STATE_PRIVREGS_IMR				("IMR")
+#define STATE_PRIVREGS_SIGLBLID			("SIGLBLID")
 #define STATE_PRIVREGS_CRTMODE			("CrtMode")
 
 #define LOG_NAME						("gs")
@@ -67,7 +68,7 @@ CGSHandler::CGSHandler()
 , m_frameDump(nullptr)
 , m_loggingEnabled(true)
 {
-	CAppConfig::GetInstance().RegisterPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE, CGSHandler::PRESENTATION_MODE_FIT);
+	RegisterPreferences();
 	
 	m_presentationParams.mode = static_cast<PRESENTATION_MODE>(CAppConfig::GetInstance().GetPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE));
 	m_presentationParams.windowWidth = 512;
@@ -104,6 +105,16 @@ CGSHandler::~CGSHandler()
 	delete [] m_pCLUT;
 }
 
+void CGSHandler::RegisterPreferences()
+{
+	CAppConfig::GetInstance().RegisterPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE, CGSHandler::PRESENTATION_MODE_FIT);
+}
+
+void CGSHandler::NotifyPreferencesChanged()
+{
+	m_mailBox.SendCall([this] () { NotifyPreferencesChangedImpl(); });
+}
+
 void CGSHandler::Reset()
 {
 	ResetBase();
@@ -128,6 +139,7 @@ void CGSHandler::ResetBase()
 	m_nDISPLAY2.value.q = 0;
 	m_nCSR = 0;
 	m_nIMR = 0;
+	m_nSIGLBLID = 0;
 	m_nCrtMode = 2;
 	m_nCBP0 = 0;
 	m_nCBP1 = 0;
@@ -135,6 +147,11 @@ void CGSHandler::ResetBase()
 }
 
 void CGSHandler::ResetImpl()
+{
+
+}
+
+void CGSHandler::NotifyPreferencesChangedImpl()
 {
 
 }
@@ -161,6 +178,7 @@ void CGSHandler::SaveState(Framework::CZipArchiveWriter& archive)
 		registerFile->SetRegister64(STATE_PRIVREGS_DISPLAY2,		m_nDISPLAY2.value.q);
 		registerFile->SetRegister64(STATE_PRIVREGS_CSR,				m_nCSR);
 		registerFile->SetRegister64(STATE_PRIVREGS_IMR,				m_nIMR);
+		registerFile->SetRegister64(STATE_PRIVREGS_SIGLBLID,		m_nSIGLBLID);
 		registerFile->SetRegister32(STATE_PRIVREGS_CRTMODE,			m_nCrtMode);
 
 		archive.InsertFile(registerFile);
@@ -183,6 +201,7 @@ void CGSHandler::LoadState(Framework::CZipArchiveReader& archive)
 		m_nDISPLAY2.value.q	= registerFile.GetRegister64(STATE_PRIVREGS_DISPLAY2);
 		m_nCSR				= registerFile.GetRegister64(STATE_PRIVREGS_CSR);
 		m_nIMR				= registerFile.GetRegister64(STATE_PRIVREGS_IMR);
+		m_nSIGLBLID			= registerFile.GetRegister64(STATE_PRIVREGS_SIGLBLID);
 		m_nCrtMode			= registerFile.GetRegister32(STATE_PRIVREGS_CRTMODE);
 	}
 }
@@ -246,6 +265,9 @@ uint32 CGSHandler::ReadPrivRegister(uint32 nAddress)
 		break;
 	case GS_IMR:
 		R_REG(nAddress, nData, m_nIMR);
+		break;
+	case GS_SIGLBLID:
+		R_REG(nAddress, nData, m_nSIGLBLID);
 		break;
 	default:
 		CLog::GetInstance().Print(LOG_NAME, "Read an unhandled priviledged register (0x%0.8X).\r\n", nAddress);
@@ -311,6 +333,9 @@ void CGSHandler::WritePrivRegister(uint32 nAddress, uint32 nData)
 		break;
 	case GS_IMR:
 		W_REG(nAddress, nData, m_nIMR);
+		break;
+	case GS_SIGLBLID:
+		W_REG(nAddress, nData, m_nSIGLBLID);
 		break;
 	default:
 		CLog::GetInstance().Print(LOG_NAME, "Wrote to an unhandled priviledged register (0x%0.8X, 0x%0.8X).\r\n", nAddress, nData);
@@ -406,11 +431,26 @@ void CGSHandler::WriteRegisterMassively(const RegisterWrite* writeList, unsigned
 		switch(write.first)
 		{
 		case GS_REG_SIGNAL:
-			//TODO: Update SIGLBLID
-			m_nCSR |= CSR_SIGNAL_EVENT;
+			{
+				auto signal = make_convertible<SIGNAL>(write.second);
+				auto siglblid = make_convertible<SIGLBLID>(m_nSIGLBLID);
+				siglblid.sigid &= ~signal.idmsk;
+				siglblid.sigid |= signal.id;
+				m_nSIGLBLID = siglblid;
+				m_nCSR |= CSR_SIGNAL_EVENT;
+			}
 			break;
 		case GS_REG_FINISH:
 			m_nCSR |= CSR_FINISH_EVENT;
+			break;
+		case GS_REG_LABEL:
+			{
+				auto label = make_convertible<LABEL>(write.second);
+				auto siglblid = make_convertible<SIGLBLID>(m_nSIGLBLID);
+				siglblid.lblid &= ~label.idmsk;
+				siglblid.lblid |= label.id;
+				m_nSIGLBLID = siglblid;
+			}
 			break;
 		}
 	}
@@ -511,7 +551,7 @@ void CGSHandler::FeedImageDataImpl(void* pData, uint32 nLength)
 		{
 			auto trxReg = make_convertible<TRXREG>(m_nReg[GS_REG_TRXREG]);
 			//assert(m_trxCtx.nRRY == trxReg.nRRH);
-			ProcessImageTransfer();
+			ProcessHostToLocalTransfer();
 
 #ifdef _DEBUG
 			CLog::GetInstance().Print(LOG_NAME, "Completed image transfer at 0x%0.8X (dirty = %d).\r\n", bltBuf.GetDstPtr(), m_trxCtx.nDirty);
@@ -616,7 +656,10 @@ void CGSHandler::BeginTransfer()
 			break;
 		}
 
-		m_trxCtx.nSize	= (trxReg.nRRW * trxReg.nRRH * nPixelSize) / 8;
+		//Make sure transfer size is a multiple of 16. Some games (ex.: Gregory Horror Show)
+		//specify transfer width/height that will give a transfer size that is not a multiple of 16
+		//and will prevent proper handling of image transfer (texture cache will not be invalidated).
+		m_trxCtx.nSize	= ((trxReg.nRRW * trxReg.nRRH * nPixelSize) / 8) & ~0xF;
 		m_trxCtx.nRealSize = m_trxCtx.nSize;
 		m_trxCtx.nRRX	= 0;
 		m_trxCtx.nRRY	= 0;
@@ -629,6 +672,7 @@ void CGSHandler::BeginTransfer()
 		}
 		else if(trxDir == 1)
 		{
+			ProcessLocalToHostTransfer();
 			CLog::GetInstance().Print(LOG_NAME, "Starting transfer from 0x%0.8X, buffer size %d, psm: %d, size (%dx%d)\r\n",
 				bltBuf.GetSrcPtr(), bltBuf.GetSrcWidth(), bltBuf.nSrcPsm, trxReg.nRRW, trxReg.nRRH);
 		}
@@ -1354,11 +1398,21 @@ std::string CGSHandler::DisassembleWrite(uint8 registerId, uint64 data)
 		result = string_format("TRXDIR(XDIR: %i)", data & 0x03);
 		break;
 	case GS_REG_SIGNAL:
-		result = string_format("SIGNAL(IDMSK: 0x%0.8X, ID: 0x%0.8X)",
-			static_cast<uint32>(data >> 32), static_cast<uint32>(data));
+		{
+			auto signal = make_convertible<SIGNAL>(data);
+			result = string_format("SIGNAL(IDMSK: 0x%0.8X, ID: 0x%0.8X)",
+				signal.idmsk, signal.id);
+		}
 		break;
 	case GS_REG_FINISH:
 		result = "FINISH()";
+		break;
+	case GS_REG_LABEL:
+		{
+			auto label = make_convertible<LABEL>(data);
+			result = string_format("LABEL(IDMSK: 0x%0.8X, ID: 0x%0.8X)",
+				label.idmsk, label.id);
+		}
 		break;
 	default:
 		result = string_format("(Unknown register: 0x%0.2X)", registerId);

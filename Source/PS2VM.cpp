@@ -82,7 +82,7 @@ CPS2VM::CPS2VM()
 	}
 	
 	m_iop = std::make_unique<Iop::CSubSystem>(true);
-	m_iopOs = std::make_shared<CIopBios>(m_iop->m_cpu, m_iop->m_ram, PS2::IOP_RAM_SIZE);
+	m_iopOs = std::make_shared<CIopBios>(m_iop->m_cpu, m_iop->m_ram, PS2::IOP_RAM_SIZE, m_iop->m_scratchPad);
 
 	m_ee = std::make_unique<Ee::CSubSystem>(m_iop->m_ram, *m_iopOs);
 	m_ee->m_os->OnRequestLoadExecutable.connect(boost::bind(&CPS2VM::ReloadExecutable, this, _1, _2));
@@ -371,7 +371,7 @@ void CPS2VM::ResetVM()
 		m_ee->m_gs->Reset();
 	}
 
-	m_iopOs->Reset(new Iop::CSifManPs2(m_ee->m_sif, m_ee->m_ram, m_iop->m_ram));
+	m_iopOs->Reset(std::make_shared<Iop::CSifManPs2>(m_ee->m_sif, m_ee->m_ram, m_iop->m_ram));
 
 	CDROM0_Reset();
 
@@ -695,7 +695,7 @@ void CPS2VM::SetIopCdImage(CISO9660* image)
 
 void CPS2VM::RegisterModulesInPadHandler()
 {
-	if(m_pad == NULL) return;
+	if(m_pad == nullptr) return;
 
 	m_pad->RemoveAllListeners();
 	m_pad->InsertListener(m_iopOs->GetPadman());

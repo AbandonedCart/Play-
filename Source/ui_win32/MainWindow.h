@@ -8,6 +8,7 @@
 #include "SettingsDialogProvider.h"
 #include "OutputWnd.h"
 #include "AviStream.h"
+#include "VirtualPad/VirtualPadWindow.h"
 #include "StatsOverlayWindow.h"
 #ifdef DEBUGGER_INCLUDED
 #include "Debugger.h"
@@ -31,17 +32,6 @@ protected:
 	long							OnMove(int, int) override;
 
 private:
-	class CScopedVmPauser
-	{
-	public:
-						CScopedVmPauser(CPS2VM&);
-		virtual			~CScopedVmPauser();
-
-	private:
-		CPS2VM&			m_virtualMachine;
-		bool			m_paused;
-	};
-
 	class COpenCommand
 	{
 	public:
@@ -95,7 +85,7 @@ private:
 
 	void							LoadELF(const char*);
 	void							RefreshLayout();
-	void							RefreshStatsOverlayLayout();
+	void							RefreshOverlaysLayout();
 	void							PrintVersion(TCHAR*, size_t);
 	void							PrintStatusTextA(const char*, ...);
 	void							SetStatusText(const TCHAR*);
@@ -138,6 +128,7 @@ private:
 
 	Framework::Win32::CStatusBar	m_statusBar;
 	COutputWnd*						m_outputWnd;
+	CVirtualPadWindow				m_virtualPadWnd;
 	CStatsOverlayWindow				m_statsOverlayWnd;
 #ifdef DEBUGGER_INCLUDED
 	std::unique_ptr<CDebugger>		m_debugger;

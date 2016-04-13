@@ -9,6 +9,7 @@
 #define STATE_CALLBACK_ADDRESS	("CallbackAddress")
 #define STATE_STATUS			("Status")
 
+#define FUNCTION_CDINIT				"CdInit"
 #define FUNCTION_CDREAD				"CdRead"
 #define FUNCTION_CDSEEK				"CdSeek"
 #define FUNCTION_CDGETERROR			"CdGetError"
@@ -19,6 +20,7 @@
 #define FUNCTION_CDREADCLOCK		"CdReadClock"
 #define FUNCTION_CDSTATUS			"CdStatus"
 #define FUNCTION_CDCALLBACK			"CdCallback"
+#define FUNCTION_CDSETMMODE			"CdSetMmode"
 #define FUNCTION_CDLAYERSEARCHFILE	"CdLayerSearchFile"
 
 using namespace Iop;
@@ -50,6 +52,29 @@ void CCdvdman::SaveState(Framework::CZipArchiveWriter& archive)
 	archive.InsertFile(registerFile);
 }
 
+static uint8 Uint8ToBcd(uint8 input)
+{
+	uint8 digit0 = input % 10;
+	uint8 digit1 = (input / 10) % 10;
+	return digit0 | (digit1 << 4);
+}
+
+uint32 CCdvdman::CdReadClockDirect(uint8* clockBuffer)
+{
+	auto currentTime = time(0);
+	auto localTime = localtime(&currentTime);
+	clockBuffer[0] = 0;                                                           //Status (0 = ok, anything else = error)
+	clockBuffer[1] = Uint8ToBcd(static_cast<uint8>(localTime->tm_sec));           //Seconds
+	clockBuffer[2] = Uint8ToBcd(static_cast<uint8>(localTime->tm_min));           //Minutes
+	clockBuffer[3] = Uint8ToBcd(static_cast<uint8>(localTime->tm_hour));          //Hour
+	clockBuffer[4] = 0;                                                           //Padding
+	clockBuffer[5] = Uint8ToBcd(static_cast<uint8>(localTime->tm_mday));          //Day
+	clockBuffer[6] = Uint8ToBcd(static_cast<uint8>(localTime->tm_mon + 1));       //Month
+	clockBuffer[7] = Uint8ToBcd(static_cast<uint8>(localTime->tm_year % 100));    //Year
+	//Returns 1 on success and 0 on error
+	return 1;
+}
+
 std::string CCdvdman::GetId() const
 {
 	return "cdvdman";
@@ -59,6 +84,9 @@ std::string CCdvdman::GetFunctionName(unsigned int functionId) const
 {
 	switch(functionId)
 	{
+	case 4:
+		return FUNCTION_CDINIT;
+		break;
 	case 6:
 		return FUNCTION_CDREAD;
 		break;
@@ -89,6 +117,9 @@ std::string CCdvdman::GetFunctionName(unsigned int functionId) const
 	case 37:
 		return FUNCTION_CDCALLBACK;
 		break;
+	case 75:
+		return FUNCTION_CDSETMMODE;
+		break;
 	case 84:
 		return FUNCTION_CDLAYERSEARCHFILE;
 		break;
@@ -102,6 +133,9 @@ void CCdvdman::Invoke(CMIPS& ctx, unsigned int functionId)
 {
 	switch(functionId)
 	{
+	case 4:
+		ctx.m_State.nGPR[CMIPS::V0].nV0 = CdInit(ctx.m_State.nGPR[CMIPS::A0].nV0);
+		break;
 	case 6:
 		ctx.m_State.nGPR[CMIPS::V0].nV0 = CdRead(
 			ctx.m_State.nGPR[CMIPS::A0].nV0,
@@ -140,6 +174,9 @@ void CCdvdman::Invoke(CMIPS& ctx, unsigned int functionId)
 	case 37:
 		ctx.m_State.nGPR[CMIPS::V0].nV0 = CdCallback(ctx.m_State.nGPR[CMIPS::A0].nV0);
 		break;
+	case 75:
+		ctx.m_State.nGPR[CMIPS::V0].nV0 = CdSetMmode(ctx.m_State.nGPR[CMIPS::A0].nV0);
+		break;
 	case 84:
 		ctx.m_State.nGPR[CMIPS::V0].nV0 = CdLayerSearchFile(
 			ctx.m_State.nGPR[CMIPS::A0].nV0,
@@ -156,6 +193,16 @@ void CCdvdman::Invoke(CMIPS& ctx, unsigned int functionId)
 void CCdvdman::SetIsoImage(CISO9660* image)
 {
 	m_image = image;
+}
+
+uint32 CCdvdman::CdInit(uint32 mode)
+{
+	CLog::GetInstance().Print(LOG_NAME, FUNCTION_CDINIT "(mode = %d);\r\n", mode);
+	//Mode
+	//0 - Initialize
+	//1 - Init & No Check
+	//5 - Exit
+	return 1;
 }
 
 uint32 CCdvdman::CdRead(uint32 startSector, uint32 sectorCount, uint32 bufferPtr, uint32 modePtr)
@@ -288,20 +335,8 @@ uint32 CCdvdman::CdReadClock(uint32 clockPtr)
 	CLog::GetInstance().Print(LOG_NAME, FUNCTION_CDREADCLOCK "(clockPtr = %0.8X);\r\n",
 		clockPtr);
 
-	time_t currentTime = time(0);
-	tm* localTime = localtime(&currentTime);
-
-	uint8* clockResult = m_ram + clockPtr;
-	clockResult[0] = 0x01;											//Status ?
-	clockResult[1] = static_cast<uint8>(localTime->tm_sec);			//Seconds
-	clockResult[2] = static_cast<uint8>(localTime->tm_min);			//Minutes
-	clockResult[3] = static_cast<uint8>(localTime->tm_hour);		//Hour
-	clockResult[4] = 0;												//Week
-	clockResult[5] = static_cast<uint8>(localTime->tm_mday);		//Day
-	clockResult[6] = static_cast<uint8>(localTime->tm_mon);			//Month
-	clockResult[7] = static_cast<uint8>(localTime->tm_year % 100);	//Year
-
-	return 0;
+	auto clockBuffer = m_ram + clockPtr;
+	return CdReadClockDirect(clockBuffer);
 }
 
 uint32 CCdvdman::CdStatus()
@@ -318,6 +353,12 @@ uint32 CCdvdman::CdCallback(uint32 callbackPtr)
 	uint32 oldCallbackPtr = m_callbackPtr;
 	m_callbackPtr = callbackPtr;
 	return oldCallbackPtr;
+}
+
+uint32 CCdvdman::CdSetMmode(uint32 mode)
+{
+	CLog::GetInstance().Print(LOG_NAME, FUNCTION_CDSETMMODE "(mode = %d);\r\n", mode);
+	return 1;
 }
 
 uint32 CCdvdman::CdLayerSearchFile(uint32 fileInfoPtr, uint32 namePtr, uint32 layer)

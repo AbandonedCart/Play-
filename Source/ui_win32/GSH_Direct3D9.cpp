@@ -57,17 +57,22 @@ CGSHandler::FactoryFunction CGSH_Direct3D9::GetFactoryFunction(Framework::Win32:
 	return [=] () { return new CGSH_Direct3D9(outputWnd); };
 }
 
-void CGSH_Direct3D9::ProcessImageTransfer()
+void CGSH_Direct3D9::ProcessHostToLocalTransfer()
 {
 
 }
 
-void CGSH_Direct3D9::ProcessClutTransfer(uint32, uint32)
+void CGSH_Direct3D9::ProcessLocalToHostTransfer()
 {
 
 }
 
 void CGSH_Direct3D9::ProcessLocalToLocalTransfer()
+{
+
+}
+
+void CGSH_Direct3D9::ProcessClutTransfer(uint32, uint32)
 {
 
 }
@@ -1309,7 +1314,7 @@ CGSH_Direct3D9::CFramebuffer::CFramebuffer(DevicePtr& device, uint32 basePtr, ui
 {
 	HRESULT result = S_OK;
 	
-	result = D3DXCreateTexture(device, width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8B8G8R8, D3DPOOL_DEFAULT, &m_renderTarget);
+	result = D3DXCreateTexture(device, width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_renderTarget);
 	assert(SUCCEEDED(result));
 }
 
