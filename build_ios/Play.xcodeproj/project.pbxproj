@@ -842,8 +842,6 @@
 				70834B821B1BD2E100E8D5C6 /* Framework.xcodeproj */,
 				8794D9B31B88B61C00B1B3A3 /* UIKit.framework */,
 				8794D9B11B88B61400B1B3A3 /* libbz2.dylib */,
-				874ECDA91B7DB862000075B6 /* libsqlite3.dylib */,
-				70834CE01B1BD7EE00E8D5C6 /* libz.dylib */,
 				7055C9A21CAEBB820075A9F5 /* OpenAL.framework */,
 				8794D9AF1B88B60900B1B3A3 /* OpenGLES.framework */,
 				8794D9AD1B88B60100B1B3A3 /* QuartzCore.framework */,
