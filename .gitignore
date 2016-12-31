@@ -4,7 +4,6 @@ build_android/gen
 build_android/obj
 build_ios/build
 local.properties
-ant.properties
 Debug
 Release
 ReleaseWithDebugger
@@ -21,5 +20,4 @@ ReleaseAot
 *.xccheckout
 *.xcscmblueprint
 xcuserdata
-tools/Compile
 
